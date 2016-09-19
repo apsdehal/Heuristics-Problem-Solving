@@ -1,6 +1,8 @@
 #include <iostream>
 #include <utility>
 #include <map>
+#include <string>
+#include "custom_socket.h"
 
 using namespace std;
 
@@ -12,12 +14,14 @@ class ExpandingNim {
 		int currentMax;
 		int nStones;
 		int currentStones;
+		tcp_client c;
 	public:
 		ExpandingNim(int nStones, int curr = 2) {
 			this->nStones = nStones;
 			this->currentMax = curr;
 			this->isWinning(nStones, curr);
 			this->currentStones = nStones;
+			c.conn("localhost", 50008);
 		}
 
 		void setCurrentMax(int curr) {
@@ -87,6 +91,35 @@ class ExpandingNim {
 			return bestMove;
 		}
 
+		string* getTokens() {
+			string* tokens = new string[4];
+			string data;
+			while(1) {
+				data = c.receive(1024);
+				if (data.length() > 0) {
+					break;
+				}
+			}
+
+			string curr = "";
+
+			int j = 0;
+
+			for(int i = 0; i < data.length(); i++) {
+				if (data[i] == ' ') {
+					tokens[j] = curr;
+					curr = "";
+					j++;
+				} else {
+					curr += data[i];
+				}
+			}
+
+			tokens[j] = curr;
+			return tokens;
+
+		}
+
 		void play(bool flag = 1) {
 
 			while(this->currentStones > 0) {
@@ -97,16 +130,16 @@ class ExpandingNim {
 					this->currentStones = this->currentStones - nextMove;
 					cout<<"Current left stones are "<<this->currentStones<<endl;
 					cout<<"CurrentMax is "<<this->currentMax<<endl;
+					string toBeSend = to_string(nextMove) + " 0";
+					c.send_data(toBeSend);
 					flag = 0;
 				} else {
-					int nextMove;
 					cout<<"Opponent's move"<<endl;
-					cin>>nextMove;
 
-					if (nextMove == this->currentMax + 1) {
-						this->currentMax = this->currentMax + 1;
-					}
-					this->currentStones = this->currentStones - nextMove;
+					string* tokens = this->getTokens();
+
+					this->currentStones = stoi(tokens[0]);
+					this->currentMax = stoi(tokens[1]);
 
 					cout<<"Current left stones are "<<this->currentStones<<endl;
 					cout<<"CurrentMax is "<<this->currentMax<<endl;
@@ -114,6 +147,40 @@ class ExpandingNim {
 				}
 			}
 			cout<<(flag ? "Lose" : "Won")<<endl;
+		}
+
+		void playManually(bool flag = 1) {
+			while(this->currentStones > 0) {
+				if (flag) {
+					int nextMove;
+					cout<<"Your move"<<endl;
+					cin>>nextMove;
+
+					if (nextMove == this->currentMax + 1) {
+						this->currentMax = this->currentMax + 1;
+					}
+					this->currentStones = this->currentStones - nextMove;
+
+					string toBeSend = to_string(nextMove) + " 0";
+					c.send_data(toBeSend);
+
+					cout<<"Current left stones are "<<this->currentStones<<endl;
+					cout<<"CurrentMax is "<<this->currentMax<<endl;
+					flag = 0;
+				} else {
+					cout<<"Opponent's move"<<endl;
+
+					string* tokens = this->getTokens();
+
+					this->currentStones = stoi(tokens[0]);
+					this->currentMax = stoi(tokens[1]);
+
+					cout<<"Current left stones are "<<this->currentStones<<endl;
+					cout<<"CurrentMax is "<<this->currentMax<<endl;
+					flag = 1;
+
+				}
+			}
 		}
 
 		void playTogether(bool flag = 1) {
@@ -146,19 +213,29 @@ class ExpandingNim {
 };
 
 int main() {
-	int n;
+	int n, type;
+	cout<<"How do you want to play?"<<endl<<"1. Bot\n"<<"2. Manually\n"<<"3. Bot against Bot"<<endl;
+	cin>>type;
+	cout<<"Enter number of stones:"<<endl;
 	cin>> n;
 
 	ExpandingNim *obj = new ExpandingNim(n);
-	obj->printSpace();
-	return 0;
+	// obj->printSpace();
+	// return 0;
 	bool flag;
 
 	cout<<"Who plays first? 1 for you and 0 for opponent"<<endl;
 
 	cin>>flag;
 
-	// obj->playTogether(flag);
+	if (type == 1) {
+		obj->play(flag);
+	} else if (type == 2) {
+		obj->playManually(flag);
+	} else {
+		obj->playTogether(flag);
+
+	}
 
 	return 0;
 }
