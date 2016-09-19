@@ -1,6 +1,7 @@
 import Server
 import Player
 import time
+import copy
 from enum import Enum
 
 ##Install Enum34 (pip install Enum34)
@@ -15,7 +16,7 @@ class GameManager():
 
     def __init__(self, initialStones):
         self.player = [Player.Player(), Player.Player()]
-        self.server = Server.Server('', 50007)
+        self.server = Server.Server('', 50008)
         self.InitialStones = initialStones
         self.stonesLeft = self.InitialStones
         self.currentMax = min(2, self.InitialStones)
@@ -24,8 +25,8 @@ class GameManager():
         self.winner = None
         self.exitCode = ExitCodes.NotAvailable
 
-    def shouldEndGame(self, stonesToDraw, resetBit):
-        if not self.isValidMove(stonesToDraw, resetBit):
+    def shouldEndGame(self, stonesToDraw, resetBit, previousResetBit):
+        if not self.isValidMove(stonesToDraw, previousResetBit):
             self.winner = int(not self.turn)
             self.exitCode = ExitCodes.InvalidMove
             return True
@@ -60,14 +61,14 @@ class GameManager():
             return False
         playerResponse = playerResponse.split(' ')
         try:
-            playerResponse = [int(playerResponse[i]) for i in [0,1]]
+            playerResponse = [int(playerResponse[i]) for i in [0, 1]]
         except ValueError:
             return False
         return playerResponse
 
-    def isValidMove(self, stonesToDraw, resetBit):
+    def isValidMove(self, stonesToDraw, previousResetBit):
         if (stonesToDraw > self.stonesLeft or stonesToDraw > self.currentMax + 1 
-            or (resetBit and stonesToDraw > 3) or stonesToDraw <= 0):
+            or (previousResetBit and stonesToDraw > 3) or stonesToDraw <= 0):
             return False
         return True
 
@@ -75,8 +76,7 @@ class GameManager():
         self.stonesLeft-= stonesToDraw
         self.currentMax = max(stonesToDraw, self.currentMax)
         if resetBit:
-            curPlayer = self.player[int(self.turn)]
-            curPlayer.setIsUsedReset(True)
+            self.player[int(self.turn)].setIsUsedReset(True)
         if self.stonesLeft == 0:
             self.winner = self.turn
             self.exitCode = ExitCodes.LegalWin
@@ -107,11 +107,12 @@ class GameManager():
             timeTaken = time.time() - start
             curPlayer.updateTimeConsumed(timeTaken)
             playerResponse = self.parseResponse(playerResponse) 
-            resetBit = bool(playerResponse[1])
+            previousResetBit = resetBit
             if playerResponse == False:
-                self.shouldEndGame(0,0)
+                self.shouldEndGame(0, 0, 0)
                 break
-            if self.shouldEndGame(playerResponse[0], resetBit):
+            resetBit = bool(playerResponse[1])
+            if self.shouldEndGame(playerResponse[0], resetBit, previousResetBit):
                 break
             self.updateMove(playerResponse[0], resetBit)
             if self.winner != None:

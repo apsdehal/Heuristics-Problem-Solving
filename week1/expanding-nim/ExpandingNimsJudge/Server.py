@@ -5,6 +5,7 @@ class Server:
         self.host = host
         self.port = port
         self.mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # self.mySocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.mySocket.bind((self.host, self.port))
         self.connection = [None, None]
         self.address = [None, None]
