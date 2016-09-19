@@ -119,8 +119,18 @@ class ExpandingNim {
 			return tokens;
 
 		}
+		void update() {
+			cout<<"Updating state"<<endl;
+			string* tokens = this->getTokens();
 
-		void play(bool flag = 1) {
+			this->currentStones = stoi(tokens[0]);
+			this->currentMax = stoi(tokens[1]);
+
+			cout<<"Current left stones are "<<this->currentStones<<endl;
+			cout<<"CurrentMax is "<<this->currentMax<<endl;
+		}
+		void play() {
+			bool flag = 0;
 
 			while(this->currentStones > 0) {
 				if (flag) {
@@ -135,21 +145,15 @@ class ExpandingNim {
 					flag = 0;
 				} else {
 					cout<<"Opponent's move"<<endl;
-
-					string* tokens = this->getTokens();
-
-					this->currentStones = stoi(tokens[0]);
-					this->currentMax = stoi(tokens[1]);
-
-					cout<<"Current left stones are "<<this->currentStones<<endl;
-					cout<<"CurrentMax is "<<this->currentMax<<endl;
+					this->update();
 					flag = 1;
 				}
 			}
 			cout<<(flag ? "Lose" : "Won")<<endl;
 		}
 
-		void playManually(bool flag = 1) {
+		void playManually() {
+			bool flag = 0;
 			while(this->currentStones > 0) {
 				if (flag) {
 					int nextMove;
@@ -169,21 +173,15 @@ class ExpandingNim {
 					flag = 0;
 				} else {
 					cout<<"Opponent's move"<<endl;
-
-					string* tokens = this->getTokens();
-
-					this->currentStones = stoi(tokens[0]);
-					this->currentMax = stoi(tokens[1]);
-
-					cout<<"Current left stones are "<<this->currentStones<<endl;
-					cout<<"CurrentMax is "<<this->currentMax<<endl;
+					this->update();
 					flag = 1;
 
 				}
 			}
 		}
 
-		void playTogether(bool flag = 1) {
+		void playTogether() {
+			bool flag = 0;
 
 			while(this->currentStones > 0) {
 				if (flag) {
@@ -222,18 +220,13 @@ int main() {
 	ExpandingNim *obj = new ExpandingNim(n);
 	// obj->printSpace();
 	// return 0;
-	bool flag;
-
-	cout<<"Who plays first? 1 for you and 0 for opponent"<<endl;
-
-	cin>>flag;
 
 	if (type == 1) {
-		obj->play(flag);
+		obj->play();
 	} else if (type == 2) {
-		obj->playManually(flag);
+		obj->playManually();
 	} else {
-		obj->playTogether(flag);
+		obj->playTogether();
 
 	}
 
