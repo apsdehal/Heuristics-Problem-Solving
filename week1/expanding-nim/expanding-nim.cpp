@@ -36,14 +36,20 @@ class ExpandingNim {
 
 		int isWinning(int n, int currMax) {
 			if (n == 4) {
+				mem[make_pair(n, currMax)] = 0;
 				return 0;
 			}
 
 			if (n == 1 || n == 2 || n == 3) {
+				mem[make_pair(n, currMax)] = 1;
 				return 1;
 			}
 
 			if (n <= 0) {
+				if (n == 0) {
+					mem[make_pair(n, currMax)] = 0;
+				}
+
 				return 0;
 			}
 
@@ -83,6 +89,37 @@ class ExpandingNim {
 			}
 		}
 
+		int checkForLosing() {
+			if (mem[make_pair(this->currentStones, this->currentMax)]
+				|| this->opponentResetState
+				|| this->myResetState) {
+				return -1;
+			} else {
+				int i, j;
+				int possible = -1;
+				pii temp;
+				for(i = 1; i <= this->currentMax + 1; i++) {
+					bool flag = true;
+					for(j = 1; j <= 3; j++) {
+						temp = make_pair(
+									this->currentStones - i - j,
+									i == this->currentMax + 1 ?
+									this->currentMax + 1 : this->currentMax);
+
+						if (!mem[temp]) {
+							flag = false;
+						}
+					}
+
+					if (flag) {
+						possible = i;
+					}
+				}
+
+				return possible;
+			}
+		}
+
 		pii calculateNextMove() {
 			cout<<(mem[make_pair(this->currentStones, this->currentMax)] ? "I am winning" : "I am losing")<<endl;
 			int bestMove = 1; int reset = 0;
@@ -92,6 +129,18 @@ class ExpandingNim {
 				this->hasOpponentUsedReset = 0;
 				this->opponentResetState = 1;
 				this->currentMax = 2;
+			}
+
+			bestMove = this->checkForLosing();
+
+			if (bestMove != -1) {
+				if (bestMove == this->currentMax + 1) {
+					this->currentMax += 1;
+				}
+				this->myResetState = 1;
+				return make_pair(bestMove, 1);
+			} else {
+				bestMove = 1;
 			}
 
 			for(int i = 1; i <= this->currentMax + 1; i++) {
@@ -292,12 +341,12 @@ int main() {
 	cout<<"Enter number of stones:"<<endl;
 	cin>> n;
 
-	int socketNo;
+	int socketNo = 0;
 
-	if (type != 4) {
-		cout<<"Enter socket no"<<endl;
-		cin>>socketNo;
-	}
+	// if (type != 4) {
+	// 	cout<<"Enter socket no"<<endl;
+	// 	cin>>socketNo;
+	// }
 
 	if (!socketNo) {
 		socketNo = 50008;
