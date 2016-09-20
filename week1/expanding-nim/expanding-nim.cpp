@@ -35,9 +35,18 @@ class ExpandingNim {
 		}
 
 		int isWinning(int n, int currMax) {
+			if (n == 4) {
+				return 0;
+			}
+
+			if (n == 1 || n == 2 || n == 3) {
+				return 1;
+			}
+
 			if (n <= 0) {
 				return 0;
 			}
+
 			pii curr = make_pair(n, currMax);
 
 			if (mem.find(curr) != mem.end()) {
@@ -86,7 +95,12 @@ class ExpandingNim {
 			}
 
 			for(int i = 1; i <= this->currentMax + 1; i++) {
-				if (this-> currentStones - i  <= 0) {
+				if (this->currentStones - i  == 4) {
+					bestMove = i;
+					break;
+				}
+
+				if (this->currentStones - i <= 0) {
 					bestMove = i;
 					break;
 				}
@@ -108,8 +122,13 @@ class ExpandingNim {
 				this->currentMax = this->currentMax + 1;
 			}
 
-			if ((this->currentStones - bestMove) <= (this->currentMax + 1)
+			if ((this->currentStones - bestMove) <= (this->currentMax + 2)
 				&& this->opponentResetState && !this->myResetState) {
+				reset = 1;
+				this->myResetState = 1;
+			}
+
+			if (this->currentStones - bestMove == 4 && !this->myResetState) {
 				reset = 1;
 				this->myResetState = 1;
 			}
@@ -226,7 +245,7 @@ class ExpandingNim {
 
 				}
 			}
-			cout<<(flag ? "Won" : "Lose")<<endl;
+			cout<<(flag ? "Lose" : "Win")<<endl;
 			this->c.closeconn();
 		}
 
