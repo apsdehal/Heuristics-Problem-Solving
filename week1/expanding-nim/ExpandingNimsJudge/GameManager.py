@@ -20,7 +20,7 @@ class GameManager():
         self.InitialStones = initialStones
         self.stonesLeft = self.InitialStones
         self.currentMax = min(2, self.InitialStones)
-        self.turn = False #0 in bool, we will have player 0 and player 1 
+        self.turn = False #0 in bool, we will have player 0 and player 1
         self.TimeLimit = 120 #inseconds
         self.winner = None
         self.exitCode = ExitCodes.NotAvailable
@@ -46,10 +46,10 @@ class GameManager():
 
     def isNotTLE(self):
         curPlayer = self.player[int(self.turn)]
-        if curPlayer.getTimeConsumed() > self.TimeLimit:
-            return False
+        # if curPlayer.getTimeConsumed() > self.TimeLimit:
+        #     return False
         return True
-        
+
     def isValidReset(self, resetBit):
         curPlayer = self.player[int(self.turn)]
         if (resetBit and curPlayer.getIsUsedReset()):
@@ -67,7 +67,7 @@ class GameManager():
         return playerResponse
 
     def isValidMove(self, stonesToDraw, previousResetBit):
-        if (stonesToDraw > self.stonesLeft or stonesToDraw > self.currentMax + 1 
+        if (stonesToDraw > self.stonesLeft or stonesToDraw > self.currentMax + 1
             or (previousResetBit and stonesToDraw > 3) or stonesToDraw <= 0):
             return False
         return True
@@ -99,14 +99,15 @@ class GameManager():
         while 1:
             curPlayer = self.player[int(self.turn)]
             self.statusUpdate()
-            curGameConfig = "{} {} {} {}".format(self.stonesLeft, 
+            curGameConfig = "{} {} {} {}".format(self.stonesLeft,
                 self.currentMax, int(resetBit), int(isGameOver))
             self.server.send(curGameConfig, int(self.turn))
             start = time.time()
             playerResponse = self.server.receive(int(self.turn))
+            print playerResponse
             timeTaken = time.time() - start
             curPlayer.updateTimeConsumed(timeTaken)
-            playerResponse = self.parseResponse(playerResponse) 
+            playerResponse = self.parseResponse(playerResponse)
             previousResetBit = resetBit
             if playerResponse == False:
                 self.shouldEndGame(0, 0, 0)
@@ -126,7 +127,9 @@ class GameManager():
 
 
 def main():
-    gm = GameManager(100)
+    num = input()
+    print num
+    gm = GameManager(num)
     gm.run()
     print "In GameManager"
 if __name__ == '__main__':
