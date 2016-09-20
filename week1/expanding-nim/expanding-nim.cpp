@@ -251,7 +251,7 @@ class ExpandingNim {
 
 					cout<<"Current left stones are "<<this->currentStones<<endl;
 					cout<<"CurrentMax is "<<this->currentMax<<endl;
-					string toBeSend = to_string(nextMove.first) + " " + to_string(nextMove.second);
+					string toBeSend = to_string((long long)nextMove.first) + " " + to_string((long long)nextMove.second);
 					c.send_data(toBeSend);
 					flag = 0;
 				} else {
@@ -278,7 +278,7 @@ class ExpandingNim {
 					}
 					this->currentStones = this->currentStones - nextMove;
 
-					string toBeSend = to_string(nextMove) + " " + to_string(reset);
+					string toBeSend = to_string((long long)nextMove) + " " + to_string((long long)reset);
 					c.send_data(toBeSend);
 
 					if (reset) {
@@ -331,6 +331,10 @@ class ExpandingNim {
 			cout<<(flag ? "Lose" : "Won")<<endl;
 			this->c.closeconn();
 		}
+
+		void closeConn() {
+			this->c.closeconn();
+		}
 };
 
 int main() {
@@ -364,5 +368,6 @@ int main() {
 		obj->printSpace();
 	}
 
+	obj->closeConn();
 	return 0;
 }
