@@ -1,13 +1,15 @@
 /**
     C++ client example using sockets
 */
-#include<iostream>    //cout
-#include<stdio.h> //printf
-#include<string.h>    //strlen
-#include<string>  //string
-#include<sys/socket.h>    //socket
-#include<arpa/inet.h> //inet_addr
-#include<netdb.h> //hostent
+#include <iostream>    //cout
+#include <stdio.h> //printf
+#include <string.h>    //strlen
+#include <string>  //string
+#include <sys/socket.h>    //socket
+#include <arpa/inet.h> //inet_addr
+#include <netdb.h> //hostent
+#include <unistd.h>
+
 
 using namespace std;
 
@@ -27,6 +29,7 @@ public:
     bool conn(string, int);
     bool send_data(string data);
     string receive(int);
+    void closeconn();
 };
 
 tcp_client::tcp_client()
@@ -133,8 +136,13 @@ string tcp_client::receive(int size=512)
     if( recv(sock , buffer , sizeof(buffer) , 0) < 0)
     {
         puts("recv failed");
+        exit(1);
     }
 
     reply = buffer;
     return reply;
+}
+
+void tcp_client::closeconn() {
+    close(sock);
 }
