@@ -37,15 +37,10 @@ class InputParser:
 
 
 				if flag == 0:
-					if len(nodes) == 0:
-						nodes.append(None)
 					nodes.append(Node(int(line[1]), int(line[2]), int(line[3]), float(line[4])))
 					nNodes = nNodes + 1
 				else:
-					if len(nodes[int(line[1])].hours) == 0:
-						nodes[int(line[1])].hours.append(None)
-
-					nodes[int(line[1])].hours.append([int(line[2]), int(line[3])])
+					nodes[int(line[1]) - 1].hours.append([int(line[2]), int(line[3])])
 					nDays = nDays + 1
 
 			self.nodes = nodes
