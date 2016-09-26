@@ -12,11 +12,11 @@ def getClusters(info):
 
 	finalClusters = [[] for _ in range(info['nDays'])]
 
-	print len(clusters)
-	for i in range(0, len(clusters)):
+	for i in range(len(clusters)):
 		currCluster = clusters[i]
 		info['nodes'][i].cluster = currCluster
-		print currCluster
 		finalClusters[currCluster].append(i)
 
-	print finalClusters
+	info['clusters'] = finalClusters
+
+	return info
