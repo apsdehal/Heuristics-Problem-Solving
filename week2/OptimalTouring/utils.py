@@ -284,13 +284,13 @@ def timeConsumed(info):
 		for node in path:
 			nodeIndex += 1
 			currentNode = info['nodes'][node]
-			if(nodeIndex==0):
-				time = time + currentNode.hours[day][0]+currentNode.visit
-				if(nodeIndex<len(path)-1):
-					time = time +info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
-			else:
-				time = time + currentNode.wait + currentNode.visit
-				if(nodeIndex<len(path)-1):
-					time = time +info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
+			#if(nodeIndex==0):
+			time = time + currentNode.visit
+			if(nodeIndex<len(path)-1):
+				time = time +info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
+			#else:
+				#time = time + currentNode.wait + currentNode.visit
+				#if(nodeIndex<len(path)-1):
+					#time = time +info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
 		timeSpent.append(time)
 	return timeSpent
