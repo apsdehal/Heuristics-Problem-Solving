@@ -55,6 +55,12 @@ def printNodes(info):
 	for node in info['nodes']:
 		print node.index, node.visit, node.profit, node.hours, node.reach, node.wait
 
+def printPaths(paths):
+	for path in paths:
+		for x in range(0, len(path)):
+			print path[x] + 1,
+		print
+
 def associateInsertedMap(info):
 	info['inserted'] = [-1 for _ in range(info['nNodes'])]
 	return info

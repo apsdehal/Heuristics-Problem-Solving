@@ -3,10 +3,9 @@ from node import Node
 
 class InputParser:
 	def __init__(self, args):
-
 		inputFile = "./given_info.txt"
 
-		if args[1] != None:
+		if len(args) > 1:
 			inputFile = args[1]
 
 		if not os.path.exists(inputFile):
