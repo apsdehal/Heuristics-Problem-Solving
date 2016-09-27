@@ -5,6 +5,8 @@ from inputParser import InputParser
 import utils
 import nodeInserter
 import time
+from random import randint
+
 
 if __name__ == "__main__":
 	start = time.clock()
@@ -20,6 +22,8 @@ if __name__ == "__main__":
 		info = kmeans.getClusters(info)
 		info = utils.associateInsertedMap(info)
 		info = utils.RouteInitPhase(info)
+
+		info['clusterParameter'] = [1, 1.1, 1.2, 1.3][randint(0, 3)]
 		for i in range(0, 10):
 			info, shouldGoAhead = nodeInserter.insertNodesInPaths(info)
 			if not shouldGoAhead:

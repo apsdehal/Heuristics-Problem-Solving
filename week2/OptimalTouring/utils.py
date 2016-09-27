@@ -169,7 +169,7 @@ def generatePathShifts(info):
 
 			# We prefer that same cluster nodes are added preferably
 			if node.cluster == i:
-				clusterParameter = 1.3
+				clusterParameter = info['clusterParameter']
 
 			for it in range(-1, len(path)):
 				if it == -1:
