@@ -11,11 +11,20 @@ def RouteInitPhase(info):
 	i = 0
 	for cluster in clusters:
 		maximum = 0
+		while (info['inserted'][maximum] != -1 and maximum < info['nNodes']) \
+		 or not validateNodeForPath(nodes[maximum], i):
+			maximum += 1
+
+		if maximum == info['nNodes']:
+			continue
+
 		currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / \
 		(nodes[maximum].hours[i][0] + nodes[maximum].visit)
 
 		for j in range(0, len(cluster)):
 			currentNode = nodes[cluster[j]]
+			if info['inserted'][cluster[j]] != -1:
+				continue
 
 			if not validateNodeForPath(currentNode, i):
 				continue
@@ -25,6 +34,7 @@ def RouteInitPhase(info):
 				maximum = cluster[j]
 				currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / \
 				(nodes[maximum].hours[i][0] + nodes[maximum].visit)
+
 
 		info['inserted'][maximum] = i
 		paths[i].append(maximum)
@@ -122,7 +132,7 @@ def validatePath(info):
 					isValid = False
 					return isValid, day
 			i+=1
-		print "Path:", day, " is valid"
+		# print "Path:", day, " is valid"
 	return isValid, -1
 
 
@@ -267,7 +277,9 @@ def insertNode(info, pathShifts):
 	for node in finalNodes:
 		if node.val == math.inf:
 			continue
+
 		paths[node.path].insert(node.prev + 1, node.index)
+		info['nodes'][node.index].path = node.path
 		info['inserted'][node.index] = node.path
 
 	return info, True
@@ -275,7 +287,7 @@ def insertNode(info, pathShifts):
 
 def timeConsumed(info):
 	paths = info['paths']
-	day = -1 
+	day = -1
 	timeSpent = []
 	for path in paths:
 		day += 1
