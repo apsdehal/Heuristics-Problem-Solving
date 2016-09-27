@@ -8,4 +8,5 @@ class Node:
 		self.reach = -1
 		self.wait = -1
 		self.maxShift = -1
+		self.path = -1
 

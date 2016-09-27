@@ -10,4 +10,5 @@ if __name__ == "__main__":
 	info = kmeans.getClusters(info)
 	info = graphGenerator.graphGen(info)
 	info = utils.associateInsertedMap(info)
-	utils.RouteInitPhase(info)
+	info = utils.RouteInitPhase(info)
+	info = utils.calculateMaxShift(info)
