@@ -11,4 +11,4 @@ if __name__ == "__main__":
 	info = graphGenerator.graphGen(info)
 	info = utils.associateInsertedMap(info)
 	info = utils.RouteInitPhase(info)
-	info = utils.calculateMaxShift(info)
+	info = utils.calcMaxShift(info)

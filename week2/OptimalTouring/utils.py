@@ -6,13 +6,13 @@ def RouteInitPhase(info):
 	i = 0
 	for cluster in clusters:
 		maximum = 0
-		currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + nodes[maximum].visit))
+		currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + nodes[maximum].visit)
 
 		for j in range(0, len(cluster)):
 			currentNode = nodes[cluster[j]]
-			if (currentNode.profit * currentNode.profit) / (currentNode.hours[i][0] + currentNode.visit)) > currentMaximumRatio:
+			if (currentNode.profit * currentNode.profit) / (currentNode.hours[i][0] + currentNode.visit) > currentMaximumRatio:
 				maximum = cluster[j]
-				currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + nodes[maximum].visit))
+				currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + nodes[maximum].visit)
 
 		info['inserted'][maximum] = i
 		paths[i].append(maximum)
@@ -57,8 +57,7 @@ def calculateReachAndWait(info):
 			currentNode = info['nodes'][node]
 
 			currentNode.reach = startTime
-			currentNode.wait =
-			currentNode.hours[i][0] > startTime ? currentNode.hours[i][0] - startTime : 0
+			currentNode.wait = currentNode.hours[i][0] - startTime if currentNode.hours[i][0] > startTime else 0
 
 			if currentNode.wait > 0:
 				startTime = currentNode.hours[i][0] + currentNode.visit
@@ -71,8 +70,7 @@ def calculateReachAndWait(info):
 def insertNode(info):
 	pathShifts = [[] for _ in range(info['nDays'])]
 
-	# shiftp = travelip + waitp + visitp + travelpj − travelij
 	for node in info['nodes']:
 		for path in info['paths']:
 			for it in range(len(path - 1)):
-
+				continue
