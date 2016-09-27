@@ -9,5 +9,5 @@ if __name__ == "__main__":
 	info = parsedInfo.getInfo()
 	info = kmeans.getClusters(info)
 	info = graphGenerator.graphGen(info)
-
+	info = utils.associateInsertedMap(info)
 	utils.RouteInitPhase(info)
