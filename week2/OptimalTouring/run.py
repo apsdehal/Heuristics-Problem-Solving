@@ -17,3 +17,5 @@ if __name__ == "__main__":
 
 	info = utils.insertNode(info, pathShifts)
 
+	print info['paths']
+
