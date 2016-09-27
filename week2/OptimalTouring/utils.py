@@ -207,7 +207,9 @@ def validatePath(info):
 		i = 0
 		for node in path:
 			currentNode = info['nodes'][node]
-			leaveTime = currentNode.reach + currentNode.wait + currentNode.visit
+			leaveTime = currentNode.reach + currentNode.visit
+			if(i>0):
+				leaveTime = leaveTime + currentNode.wait
 			if(leaveTime > currentNode.hours[day][1]):
 				print "--Error-- , Invalid Path, Destination closed in between"
 				isValid = False
