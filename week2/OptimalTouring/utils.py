@@ -272,3 +272,25 @@ def insertNode(info, pathShifts):
 
 	return info, True
 
+
+def timeConsumed(info):
+	paths = info['paths']
+	day = -1 
+	timeSpent 
+	for path in paths:
+		day += 1
+		nodeIndex = -1
+		time = 0
+		for node in path:
+			nodeIndex += 1
+			currentNode = info['nodes'][node]
+			if(nodeIndex==0):
+				time = time + currentNode.hours[day][0]+currentNode.visit
+				if(nodeIndex<len(path)-1):
+					time = time +info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
+			else:
+				time = time + currentNode.wait + currentNode.visit
+				if(nodeIndex<len(path)-1):
+					time = time +info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
+		timeSpent.append(time)
+	return timeSpent
