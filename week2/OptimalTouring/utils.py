@@ -83,14 +83,13 @@ def calculateReachAndWait(info):
 				currentNode.reach = currentNode.hours[day][0]
 			else:
 				currentNode.reach = startTime
-			currentNode.wait = currentNode.hours[day][0] - startTime \
-			if currentNode.hours[day][0] > startTime else 0
+
+			currentNode.wait = currentNode.hours[day][0] - currentNode.reach \
+			if currentNode.hours[day][0] > currentNode.reach else 0
 
 			if(nodeIndex < len(path)-1):
-				if currentNode.wait > 0:
-					startTime = currentNode.hours[day][0] + currentNode.visit + info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
-				else:
-					startTime = startTime + currentNode.visit + info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
+				startTime = currentNode.reach + currentNode.visit + \
+				 info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]] + currentNode.wait
 
 			info['nodes'][node] = currentNode
 			nodeIndex += 1
@@ -98,6 +97,33 @@ def calculateReachAndWait(info):
 
 	info['paths'] = paths
 	return info
+
+def validatePath(info):
+	paths = info['paths']
+	isValid = True
+	day = -1 ;
+	for path in paths:
+		day += 1
+		i = 0
+		for node in path:
+			currentNode = info['nodes'][node]
+			leaveTime = currentNode.reach + currentNode.visit
+			if(i>0):
+				leaveTime = leaveTime + currentNode.wait
+
+			if(leaveTime > currentNode.hours[day][1]):
+				print "--Error-- , Invalid Path, Destination closed in between"
+				isValid = False
+				return isValid, day
+			if(i<(len(path)-1)):
+				travelTime = info['costMatrix'][path[i]][path[i+1]]
+				if((travelTime + leaveTime)!= info['nodes'][path[i+1]].reach):
+					print "--Error-- , Reach time is not matching with previous node"
+					isValid = False
+					return isValid, day
+			i+=1
+		print "Path:", day, " is valid"
+	return isValid, -1
 
 
 def generatePathShifts(info):
@@ -209,32 +235,6 @@ def generatePathShifts(info):
 
 	return pathShifts
 
-def validatePath(info):
-	paths = info['paths']
-	isValid = True
-	day = -1 ;
-	for path in paths:
-		day += 1
-		i = 0
-		for node in path:
-			currentNode = info['nodes'][node]
-			leaveTime = currentNode.reach + currentNode.visit
-			if(i>0):
-				leaveTime = leaveTime + currentNode.wait
-
-			if(leaveTime > currentNode.hours[day][1]):
-				print "--Error-- , Invalid Path, Destination closed in between"
-				isValid = False
-				return isValid, day
-			if(i<(len(path)-1)):
-				travelTime = info['costMatrix'][path[i]][path[i+1]]
-				if((travelTime + leaveTime)!= info['nodes'][path[i+1]].reach):
-					print "--Error-- , Reach time is not matching with previous node"
-					isValid = False
-					return isValid, day
-			i+=1
-		print "Path:", day, " is valid"
-	return isValid, -1
 
 def insertNode(info, pathShifts):
 	finalNodes = []
