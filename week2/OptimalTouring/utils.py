@@ -33,7 +33,7 @@ def calcMaxShift(info):
 	day = 0;
 	for path in paths:
 		length = len(path)
-		for i in range(length-1,0):
+		for i in range(length-1,-1, -1):
 			node = info['nodes'][path[i]]
 			if(i==length-1):	#node is last node in path
 				node.maxShift = node.hours[day][1]-node.visit-node.reach
