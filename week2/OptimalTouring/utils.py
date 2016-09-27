@@ -1,3 +1,6 @@
+import math
+import shift
+
 def RouteInitPhase(info):
 	paths = [[] for _ in range(info['nDays'])]
 	clusters = info['clusters']
@@ -23,6 +26,9 @@ def RouteInitPhase(info):
 
 	return info
 
+def printNodes(info):
+	for node in info['nodes']:
+		print node.x, node.y, node.visit, node.profit, node.hours, node.index
 
 def associateInsertedMap(info):
 	info['inserted'] = [-1 for _ in range(info['nNodes'])]
@@ -70,7 +76,33 @@ def calculateReachAndWait(info):
 def insertNode(info):
 	pathShifts = [[] for _ in range(info['nDays'])]
 
+
 	for node in info['nodes']:
+		globalMinShift = shift.Shift(math.inf, math.inf, math.inf)
+
+		i = 0
 		for path in info['paths']:
-			for it in range(len(path - 1)):
-				continue
+			localMinShift = shift.Shift(math.inf, math.inf, math.inf)
+			for it in range(-1, len(path)):
+				if it == -1:
+					zeroNode = info['nodes'][path[0]]
+
+					# Calculate shift by using wait time of first node, visit time, distance between node and second node
+					shiftVal = 0 + node.hours[i][0] + node.visit + info['costMatrix'][node.index][zeroNode.index]
+
+					# First condition that shift must be less than wait + maxShift of second node
+					if shiftVal > zeroNode.wait + zeroNode.maxShift:
+						continue
+
+					# Second condition if start time of the first node + visit time + travel time to second node
+					# must be less than closing hours - visit time of second node
+					if node.hours[i][0] + node.visit + zeroNode.visit + info['costMatrix'][node.index][zeroNode.index] > zeroNode.hours[i][1]:
+						continue
+
+					if shiftVal < localMinShift.val:
+						localMinShift = shift.Shift(-1, i, shiftVal)
+						continue
+
+				if it == len(path) - 1:
+					continue
+			i += 1

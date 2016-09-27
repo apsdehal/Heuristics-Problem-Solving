@@ -37,7 +37,7 @@ class InputParser:
 
 
 				if flag == 0:
-					nodes.append(Node(int(line[1]), int(line[2]), int(line[3]), float(line[4])))
+					nodes.append(Node(int(line[1]), int(line[2]), int(line[3]), float(line[4]), nNodes))
 					nNodes = nNodes + 1
 				else:
 					nodes[int(line[0]) - 1].hours.append([int(line[2]) * 60, int(line[3]) * 60])

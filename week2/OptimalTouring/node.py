@@ -1,5 +1,5 @@
 class Node:
-	def __init__(self, x, y, visit, profit):
+	def __init__(self, x, y, visit, profit, index):
 		self.x = x
 		self.y = y
 		self.visit = visit
@@ -9,4 +9,5 @@ class Node:
 		self.wait = -1
 		self.maxShift = -1
 		self.path = -1
+		self.index = index
 
