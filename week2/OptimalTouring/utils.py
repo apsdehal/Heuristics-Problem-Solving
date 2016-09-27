@@ -294,3 +294,12 @@ def timeConsumed(info):
 					#time = time +info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
 		timeSpent.append(time)
 	return timeSpent
+
+def valueGenerated(info):
+	paths = info['paths']
+	value = 0
+	for path in paths:
+		for node in path:
+			currentNode = info['nodes'][node]
+			value = value + currentNode.profit
+	return value
