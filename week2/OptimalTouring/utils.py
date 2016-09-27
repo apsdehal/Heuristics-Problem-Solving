@@ -178,3 +178,27 @@ def generatePathShifts(info):
 
 
 	return pathShifts
+
+def validatePath(info):
+	paths = info['paths']
+	isValid = True 
+	day = -1 ;
+	for path in paths:
+		day += 1
+		i = 0
+		for node in path:
+			currentNode = info['nodes'][node]
+			leaveTime = currentNode.reach + currentNode.wait + currentNode.visit
+			if(leaveTime > currentNode.hours[day][1]):
+				#print "--Error-- , Invalid Path, Destination closed in between"
+				isValid = False
+				return isValid, day
+			if(i<(len(path)-1)):
+				travelTime = info['costMatrix'][path[i]][path[i+1]]
+				if((travelTime + leaveTime)!= info['nodes'][path[i+1]].reach):
+					#print "--Error-- , Reach time is not matching with previous node"
+					isValid = False
+					return isValid, day
+			i+=1
+		#print "Path:", day, " is valid"
+	return isValid, -1
