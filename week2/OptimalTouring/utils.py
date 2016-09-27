@@ -33,7 +33,7 @@ def RouteInitPhase(info):
 
 def printNodes(info):
 	for node in info['nodes']:
-		print node.x, node.y, node.visit, node.profit, node.hours, node.index, node.reach, node.wait
+		print node.index, node.x, node.y, node.visit, node.profit, node.hours, node.reach, node.wait
 
 def associateInsertedMap(info):
 	info['inserted'] = [-1 for _ in range(info['nNodes'])]
