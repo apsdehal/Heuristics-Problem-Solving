@@ -53,7 +53,7 @@ def calcMaxShift(info):
 				maxshiftBasedOnCloseTime = node.hours[day][1] - node.visit - node.reach
 				node.maxShift = min(maxShift,maxshiftBasedOnCloseTime)
 			info['nodes'][path[i]] = node
-			print "node:",path[i] , " maxshift:", node.maxShift
+			print "node:",path[i] , " maxshift:", node.maxShift, " reach time:", node.reach, " duration", node.visit, " closing time", node.hours[day][1]
 		day = day + 1;
 	return info
 
