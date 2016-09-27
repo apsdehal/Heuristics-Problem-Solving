@@ -26,3 +26,22 @@ def RouteInitPhase(info):
 def associateInsertedMap(info):
 	info['inserted'] = [-1 for _ in range(info['nNodes'])]
 	return info
+
+def calcMaxShift(info):
+	paths = info['paths']
+	day = 0;
+	for path in paths:
+		length = len(path)
+		for i in range(length-1,0):
+			node = info['nodes'][path[i]]
+			if(i==length-1):	#node is last node in path
+				node.maxShift = node.hours[day][1]-node.visit-node.reach 
+			else:
+				nextNode = info['nodes'][path[i+1]]
+				maxShift = nextNode.maxShift + node.wait - node.visit - info['costMatrix'][path[i]][path[i+1]]
+				maxshiftBasedOnCloseTime = node.hours[day][1] - node.visit - node.reach
+				node.maxShift = min(maxShift,maxshiftBasedOnCloseTime)
+			info['nodes'][path[i]] = node
+			print "node:",path[i] , " maxshift:", node.maxShift
+		day = day + 1;
+	return info
