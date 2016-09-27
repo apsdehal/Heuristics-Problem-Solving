@@ -134,7 +134,7 @@ def generatePathShifts(info):
 						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 						continue
 
-				else if it == len(path) - 1:
+				elif it == len(path) - 1:
 					finalNode = info['nodes'][path[it]]
 					waitp = node.hours[i][0] - (finalNode.reach + finalNode.visit) \
 					if (finalNode.reach + finalNode.visit) < node.hours[i][0] else 0
@@ -156,8 +156,9 @@ def generatePathShifts(info):
 						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 
 				else:
-					prevNode = info['nodes'][path[it-1]]
+					prevNode = info['nodes'][path[it]]
 					nextNode = info['nodes'][path[it+1]]
+
 					waitp = node.hours[i][0] - (prevNode.reach + prevNode.visit) \
 					if (prevNode.reach + prevNode.visit) < node.hours[i][0] else 0
 
@@ -170,7 +171,8 @@ def generatePathShifts(info):
 					if shiftVal > nextNode.wait + nextNode.maxShift:
 						continue
 
-					if prevNode.reach + prevNode.visit + info['costMatrix'][prevNode.index][node.index] \
+					if prevNode.reach + prevNode.visit + \
+					info['costMatrix'][prevNode.index][node.index] \
 					+ node.visit > node.hours[i][1]:
 						continue
 
@@ -188,7 +190,7 @@ def generatePathShifts(info):
 
 def validatePath(info):
 	paths = info['paths']
-	isValid = True 
+	isValid = True
 	day = -1 ;
 	for path in paths:
 		day += 1
@@ -209,3 +211,26 @@ def validatePath(info):
 			i+=1
 		#print "Path:", day, " is valid"
 	return isValid, -1
+
+def insertNode(info, pathShifts):
+	finalNodes = [0 for _ in range(len(pathShifts))]
+
+	for path in pathShifts:
+		i = 0
+		minShift = path[0]
+
+		for it in range(1, len(path)):
+			if path[it].ratio > minShift.ratio:
+				minShift = path[it]
+
+		finalNodes.append(minShift)
+
+	paths = info['paths']
+	for node in finalNodes:
+		if node.val == math.inf:
+			continue
+		paths[node.path].insert(path.prev, info['nodes'][node.index])
+		info['inserted'][node.index] = 1
+
+	return info
+
