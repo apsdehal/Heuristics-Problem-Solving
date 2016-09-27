@@ -16,6 +16,10 @@ def RouteInitPhase(info):
 
 		for j in range(0, len(cluster)):
 			currentNode = nodes[cluster[j]]
+
+			if not validateNodeForPath(currentNode, i):
+				continue
+
 			if (currentNode.profit * currentNode.profit) / (currentNode.hours[i][0] + \
 				currentNode.visit) > currentMaximumRatio:
 				maximum = cluster[j]
@@ -30,6 +34,12 @@ def RouteInitPhase(info):
 	info['paths'] = paths
 
 	return info
+
+def validateNodeForPath(node, pathIndex):
+	if node.hours[pathIndex][1] - node.hours[pathIndex][0] < node.visit:
+		return False
+	else:
+		return True
 
 def printNodes(info):
 	for node in info['nodes']:
@@ -50,7 +60,7 @@ def calcMaxShift(info):
 				node.maxShift = node.hours[day][1]-node.visit-node.reach
 			else:
 				nextNode = info['nodes'][path[i+1]]
-				maxShift = nextNode.maxShift + nextNode.wait 
+				maxShift = nextNode.maxShift + nextNode.wait
 				#- node.visit - 	info['costMatrix'][path[i]][path[i+1]]
 				maxshiftBasedOnCloseTime = node.hours[day][1] - node.visit - node.reach
 				node.maxShift = min(maxShift,maxshiftBasedOnCloseTime)
@@ -107,6 +117,10 @@ def generatePathShifts(info):
 
 		i = 0
 		for path in info['paths']:
+
+			if not validateNodeForPath(node, i):
+				continue
+
 			localMinShift = shift.Shift(math.inf, math.inf, math.inf, -1, 0)
 
 			clusterParameter = 1
@@ -124,9 +138,6 @@ def generatePathShifts(info):
 					+ info['costMatrix'][node.index][zeroNode.index]
 
 					shiftVal /= clusterParameter
-
-					if node.index == 6:
-						print shiftVal, zeroNode.wait, zeroNode.maxShift
 
 					# First condition that shift must be less than wait + maxShift of second node
 					if shiftVal > zeroNode.wait + zeroNode.maxShift:
@@ -155,8 +166,8 @@ def generatePathShifts(info):
 
 					shiftVal /= clusterParameter
 
-					if finalNode.reach + finalNode.visit \
-					+ info['costMatrix'][finalNode.index][node.index] + node.visit \
+					if (finalNode.reach + finalNode.visit \
+					+ info['costMatrix'][finalNode.index][node.index] + node.visit) \
 					> node.hours[i][1]:
 						continue
 
@@ -210,6 +221,7 @@ def validatePath(info):
 			leaveTime = currentNode.reach + currentNode.visit
 			if(i>0):
 				leaveTime = leaveTime + currentNode.wait
+
 			if(leaveTime > currentNode.hours[day][1]):
 				print "--Error-- , Invalid Path, Destination closed in between"
 				isValid = False
