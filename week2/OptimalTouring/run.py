@@ -3,6 +3,7 @@ import kmeans
 import graphGenerator
 from inputParser import InputParser
 import utils
+import nodeInserter
 
 if __name__ == "__main__":
 	parsedInfo = InputParser(sys.argv)
@@ -11,14 +12,13 @@ if __name__ == "__main__":
 	info = graphGenerator.graphGen(info)
 	info = utils.associateInsertedMap(info)
 	info = utils.RouteInitPhase(info)
+
+	for i in range(0, 10):
+		info, shouldGoAhead = nodeInserter.insertNodesInPaths(info)
+		if not shouldGoAhead:
+			break
+
 	info = utils.calculateReachAndWait(info)
-
-	info = utils.calcMaxShift(info)
-	pathShifts = utils.generatePathShifts(info)
-	info = utils.insertNode(info, pathShifts)
-
-	info = utils.calculateReachAndWait(info)
-
 	utils.printNodes(info)
 	print info['paths']
 	print utils.validatePath(info)

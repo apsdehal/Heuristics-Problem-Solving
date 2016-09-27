@@ -163,8 +163,6 @@ def generatePathShifts(info):
 					shiftVal = 0 + node.hours[i][0] + node.visit \
 					+ info['costMatrix'][node.index][zeroNode.index]
 
-					shiftVal /= clusterParameter
-
 					# First condition that shift must be less than wait + maxShift of second node
 					if shiftVal > zeroNode.wait + zeroNode.maxShift:
 						continue
@@ -175,14 +173,17 @@ def generatePathShifts(info):
 					+ info['costMatrix'][node.index][zeroNode.index] > zeroNode.hours[i][1]:
 						continue
 
+					shiftVal /= clusterParameter
 					if shiftVal < localMinShift.val:
 						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 						continue
 
 				elif it == len(path) - 1:
 					finalNode = info['nodes'][path[it]]
-					waitp = node.hours[i][0] - (finalNode.reach + finalNode.visit) \
-					if (finalNode.reach + finalNode.visit) < node.hours[i][0] else 0
+					waitp = node.hours[i][0] - (finalNode.reach + finalNode.visit + \
+						info['costMatrix'][finalNode.index][node.index]) \
+					if (finalNode.reach + finalNode.visit + \
+						info['costMatrix'][finalNode.index][node.index]) < node.hours[i][0] else 0
 
 					if node.hours[i][1] > 24 * 60 - 1:
 						continue
@@ -190,13 +191,12 @@ def generatePathShifts(info):
 					shiftVal = info['costMatrix'][finalNode.index][node.index] \
 					+ waitp + node.visit
 
-					shiftVal /= clusterParameter
-
 					if (finalNode.reach + finalNode.visit \
 					+ info['costMatrix'][finalNode.index][node.index] + node.visit) \
 					> node.hours[i][1]:
 						continue
 
+					shiftVal /= clusterParameter
 					if shiftVal < localMinShift.val:
 						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 
@@ -204,14 +204,14 @@ def generatePathShifts(info):
 					prevNode = info['nodes'][path[it]]
 					nextNode = info['nodes'][path[it+1]]
 
-					waitp = node.hours[i][0] - (prevNode.reach + prevNode.visit) \
-					if (prevNode.reach + prevNode.visit) < node.hours[i][0] else 0
+					waitp = node.hours[i][0] - (prevNode.reach + prevNode.visit + \
+						info['costMatrix'][prevNode.index][node.index]) \
+					if (prevNode.reach + prevNode.visit + info['costMatrix'][prevNode.index][node.index]) < \
+					node.hours[i][0] else 0
 
 					shiftVal = info['costMatrix'][prevNode.index][node.index] + waitp + \
 					node.visit + info['costMatrix'][node.index][nextNode.index] - \
 					info['costMatrix'][prevNode.index][nextNode.index]
-
-					shiftVal /= clusterParameter
 
 					if shiftVal > nextNode.wait + nextNode.maxShift:
 						continue
@@ -221,6 +221,7 @@ def generatePathShifts(info):
 					+ node.visit > node.hours[i][1]:
 						continue
 
+					shiftVal /= clusterParameter
 					if shiftVal < localMinShift.val:
 						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 
@@ -239,8 +240,17 @@ def generatePathShifts(info):
 def insertNode(info, pathShifts):
 	finalNodes = []
 
+	flag = 0
+
 	for path in pathShifts:
 		i = 0
+
+		if len(path) == 0:
+			flag = 1
+			continue
+
+		flag = 0
+
 		minShift = path[0]
 
 		for it in range(1, len(path)):
@@ -248,6 +258,9 @@ def insertNode(info, pathShifts):
 				minShift = path[it]
 
 		finalNodes.append(minShift)
+
+	if flag:
+		return info, False
 
 	paths = info['paths']
 
@@ -257,5 +270,5 @@ def insertNode(info, pathShifts):
 		paths[node.path].insert(node.prev + 1, node.index)
 		info['inserted'][node.index] = node.path
 
-	return info
+	return info, True
 
