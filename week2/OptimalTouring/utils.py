@@ -122,13 +122,13 @@ def validatePath(info):
 				leaveTime = leaveTime + currentNode.wait
 
 			if(leaveTime > currentNode.hours[day][1]):
-				print "--Error-- , Invalid Path, Destination closed in between"
+				# print "--Error-- , Invalid Path, Destination closed in between"
 				isValid = False
 				return isValid, day
 			if(i<(len(path)-1)):
 				travelTime = info['costMatrix'][path[i]][path[i+1]]
 				if((travelTime + leaveTime)!= info['nodes'][path[i+1]].reach):
-					print "--Error-- , Reach time is not matching with previous node"
+					# print "--Error-- , Reach time is not matching with previous node"
 					isValid = False
 					return isValid, day
 			i+=1
