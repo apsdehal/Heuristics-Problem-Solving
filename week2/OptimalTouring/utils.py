@@ -9,13 +9,16 @@ def RouteInitPhase(info):
 	i = 0
 	for cluster in clusters:
 		maximum = 0
-		currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + nodes[maximum].visit)
+		currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / \
+		(nodes[maximum].hours[i][0] + nodes[maximum].visit)
 
 		for j in range(0, len(cluster)):
 			currentNode = nodes[cluster[j]]
-			if (currentNode.profit * currentNode.profit) / (currentNode.hours[i][0] + currentNode.visit) > currentMaximumRatio:
+			if (currentNode.profit * currentNode.profit) / (currentNode.hours[i][0] + \
+				currentNode.visit) > currentMaximumRatio:
 				maximum = cluster[j]
-				currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + nodes[maximum].visit)
+				currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / \
+				(nodes[maximum].hours[i][0] + nodes[maximum].visit)
 
 		info['inserted'][maximum] = i
 		paths[i].append(maximum)
@@ -45,7 +48,8 @@ def calcMaxShift(info):
 				node.maxShift = node.hours[day][1]-node.visit-node.reach
 			else:
 				nextNode = info['nodes'][path[i+1]]
-				maxShift = nextNode.maxShift + node.wait - node.visit - info['costMatrix'][path[i]][path[i+1]]
+				maxShift = nextNode.maxShift + node.wait - node.visit - \
+				info['costMatrix'][path[i]][path[i+1]]
 				maxshiftBasedOnCloseTime = node.hours[day][1] - node.visit - node.reach
 				node.maxShift = min(maxShift,maxshiftBasedOnCloseTime)
 			info['nodes'][path[i]] = node
@@ -63,7 +67,8 @@ def calculateReachAndWait(info):
 			currentNode = info['nodes'][node]
 
 			currentNode.reach = startTime
-			currentNode.wait = currentNode.hours[i][0] - startTime if currentNode.hours[i][0] > startTime else 0
+			currentNode.wait = currentNode.hours[i][0] - startTime \
+			if currentNode.hours[i][0] > startTime else 0
 
 			if currentNode.wait > 0:
 				startTime = currentNode.hours[i][0] + currentNode.visit
@@ -76,19 +81,37 @@ def calculateReachAndWait(info):
 def insertNode(info):
 	pathShifts = [[] for _ in range(info['nDays'])]
 
+	"""If a node p is inserted in a route t between i and j, let shiftp = travelip +
+	waitp + visitp + travelpj - travelij denote the time cost added to the overall route time
+	due to the insertion of p. The node p can be inserted in a route t between i and j
+	if and only if startit + visiti + travelip + visitp <= closept and at the same time
+	shiftp <= waitj + maxShiftj."""
 
 	for node in info['nodes']:
+		if info['inserted'][node.index]:
+			continue
+
 		globalMinShift = shift.Shift(math.inf, math.inf, math.inf)
 
 		i = 0
 		for path in info['paths']:
 			localMinShift = shift.Shift(math.inf, math.inf, math.inf)
+
+			clusterParameter = 1
+
+			# We prefer that same cluster nodes are added preferably
+			if node.cluster == i:
+				clusterParameter = 1.3
+
 			for it in range(-1, len(path)):
 				if it == -1:
 					zeroNode = info['nodes'][path[0]]
 
 					# Calculate shift by using wait time of first node, visit time, distance between node and second node
-					shiftVal = 0 + node.hours[i][0] + node.visit + info['costMatrix'][node.index][zeroNode.index]
+					shiftVal = 0 + node.hours[i][0] + node.visit \
+					+ info['costMatrix'][node.index][zeroNode.index]
+
+					shiftVal /= clusterParameter
 
 					# First condition that shift must be less than wait + maxShift of second node
 					if shiftVal > zeroNode.wait + zeroNode.maxShift:
@@ -96,13 +119,59 @@ def insertNode(info):
 
 					# Second condition if start time of the first node + visit time + travel time to second node
 					# must be less than closing hours - visit time of second node
-					if node.hours[i][0] + node.visit + zeroNode.visit + info['costMatrix'][node.index][zeroNode.index] > zeroNode.hours[i][1]:
+					if node.hours[i][0] + node.visit + zeroNode.visit \
+					+ info['costMatrix'][node.index][zeroNode.index] > zeroNode.hours[i][1]:
 						continue
 
 					if shiftVal < localMinShift.val:
-						localMinShift = shift.Shift(-1, i, shiftVal)
+						localMinShift = shift.Shift(it, i, shiftVal)
 						continue
 
-				if it == len(path) - 1:
-					continue
+				else if it == len(path) - 1:
+					finalNode = info['nodes'][path[it]]
+					waitp = node.hours[i][0] - (finalNode.reach + finalNode.visit) \
+					if (finalNode.reach + finalNode.visit) < node.hours[i][0] else 0
+
+					if node.hours[i][1] > 24 * 60 - 1:
+						continue
+
+					shiftVal = info['costMatrix'][finalNode.index][node.index] \
+					+ waitp + node.visit
+
+					shiftVal /= clusterParameter
+
+					if finalNode.reach + finalNode.visit \
+					+ info['costMatrix'][finalNode.index][node.index] + node.visit \
+					> node.hours[i][1]:
+						continue
+
+					if shiftVal < localMinShift.val:
+						localMinShift = shift.Shift(it, i, shiftVal)
+
+				else:
+					prevNode = info['nodes'][path[it-1]]
+					nextNode = info['nodes'][path[it+1]]
+					waitp = node.hours[i][0] - (prevNode.reach + prevNode.visit) \
+					if (prevNode.reach + prevNode.visit) < node.hours[i][0] else 0
+
+					shiftVal = info['costMatrix'][prevNode.index][node.index] + waitp + \
+					node.visit + info['costMatrix'][node.index][nextNode.index] - \
+					info['costMatrix'][prevNode.index][nextNode.index]
+
+					shiftVal /= clusterParameter
+
+					if shiftVal > nextNode.wait + nextNode.maxShift:
+						continue
+
+					if prevNode.reach + prevNode.visit + info['costMatrix'][prevNode.index][node.index] \
+					+ node.visit > node.hours[i][1]:
+						continue
+
+					if shiftVal < localMinShift.val:
+						localMinShift = shift.Shift(it, i, shiftVal)
+
+			if globalMinShift.val > localMinShift.val:
+				globalMinShift = localMinShift
 			i += 1
+
+		pathShift[globalMinShift.path].append(globalMinShift)
