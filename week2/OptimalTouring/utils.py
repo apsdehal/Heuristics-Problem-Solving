@@ -1,6 +1,8 @@
 import math
 import shift
 
+math.inf = float("inf")
+
 def RouteInitPhase(info):
 	paths = [[] for _ in range(info['nDays'])]
 	clusters = info['clusters']
@@ -31,7 +33,7 @@ def RouteInitPhase(info):
 
 def printNodes(info):
 	for node in info['nodes']:
-		print node.x, node.y, node.visit, node.profit, node.hours, node.index
+		print node.x, node.y, node.visit, node.profit, node.hours, node.index, node.reach, node.wait
 
 def associateInsertedMap(info):
 	info['inserted'] = [-1 for _ in range(info['nNodes'])]
@@ -76,13 +78,16 @@ def calculateReachAndWait(info):
 
 			if(nodeIndex < len(path)-1):
 				if currentNode.wait > 0:
-					startTime = currentNode.hours[day][0] + currentNode.visit + info['costMatrix'][path[i]][path[i+1]]
+					startTime = currentNode.hours[day][0] + currentNode.visit + info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
 				else:
 					startTime = startTime + currentNode.visit + info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
 
 			info['nodes'][node] = currentNode
 			nodeIndex += 1
 		day += 1
+
+	info['paths'] = paths
+	return info
 
 
 def generatePathShifts(info):
@@ -95,14 +100,14 @@ def generatePathShifts(info):
 	shiftp <= waitj + maxShiftj."""
 
 	for node in info['nodes']:
-		if info['inserted'][node.index]:
+		if info['inserted'][node.index] != -1:
 			continue
 
-		globalMinShift = shift.Shift(math.inf, math.inf, math.inf, 0)
+		globalMinShift = shift.Shift(math.inf, math.inf, math.inf, -1, 0)
 
 		i = 0
 		for path in info['paths']:
-			localMinShift = shift.Shift(math.inf, math.inf, math.inf, 0)
+			localMinShift = shift.Shift(math.inf, math.inf, math.inf, -1, 0)
 
 			clusterParameter = 1
 
@@ -183,8 +188,10 @@ def generatePathShifts(info):
 				globalMinShift = localMinShift
 			i += 1
 
-		pathShifts[globalMinShift.path].append(globalMinShift)
+		if globalMinShift.val == math.inf:
+			continue
 
+		pathShifts[globalMinShift.path].append(globalMinShift)
 
 	return pathShifts
 
@@ -199,21 +206,21 @@ def validatePath(info):
 			currentNode = info['nodes'][node]
 			leaveTime = currentNode.reach + currentNode.wait + currentNode.visit
 			if(leaveTime > currentNode.hours[day][1]):
-				#print "--Error-- , Invalid Path, Destination closed in between"
+				print "--Error-- , Invalid Path, Destination closed in between"
 				isValid = False
 				return isValid, day
 			if(i<(len(path)-1)):
 				travelTime = info['costMatrix'][path[i]][path[i+1]]
 				if((travelTime + leaveTime)!= info['nodes'][path[i+1]].reach):
-					#print "--Error-- , Reach time is not matching with previous node"
+					print "--Error-- , Reach time is not matching with previous node"
 					isValid = False
 					return isValid, day
 			i+=1
-		#print "Path:", day, " is valid"
+		print "Path:", day, " is valid"
 	return isValid, -1
 
 def insertNode(info, pathShifts):
-	finalNodes = [0 for _ in range(len(pathShifts))]
+	finalNodes = []
 
 	for path in pathShifts:
 		i = 0
@@ -226,11 +233,12 @@ def insertNode(info, pathShifts):
 		finalNodes.append(minShift)
 
 	paths = info['paths']
+
 	for node in finalNodes:
 		if node.val == math.inf:
 			continue
-		paths[node.path].insert(path.prev, info['nodes'][node.index])
-		info['inserted'][node.index] = 1
+		paths[node.path].insert(node.prev, node.index)
+		info['inserted'][node.index] = node.path
 
 	return info
 
