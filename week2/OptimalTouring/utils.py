@@ -276,7 +276,7 @@ def insertNode(info, pathShifts):
 def timeConsumed(info):
 	paths = info['paths']
 	day = -1 
-	timeSpent 
+	timeSpent = []
 	for path in paths:
 		day += 1
 		nodeIndex = -1
