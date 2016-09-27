@@ -33,7 +33,7 @@ def RouteInitPhase(info):
 
 def printNodes(info):
 	for node in info['nodes']:
-		print node.index, node.x, node.y, node.visit, node.profit, node.hours, node.reach, node.wait
+		print node.index, node.visit, node.profit, node.hours, node.reach, node.wait
 
 def associateInsertedMap(info):
 	info['inserted'] = [-1 for _ in range(info['nNodes'])]
@@ -124,6 +124,9 @@ def generatePathShifts(info):
 					+ info['costMatrix'][node.index][zeroNode.index]
 
 					shiftVal /= clusterParameter
+
+					if node.index == 6:
+						print shiftVal, zeroNode.wait, zeroNode.maxShift
 
 					# First condition that shift must be less than wait + maxShift of second node
 					if shiftVal > zeroNode.wait + zeroNode.maxShift:
@@ -237,7 +240,7 @@ def insertNode(info, pathShifts):
 	for node in finalNodes:
 		if node.val == math.inf:
 			continue
-		paths[node.path].insert(node.prev, node.index)
+		paths[node.path].insert(node.prev + 1, node.index)
 		info['inserted'][node.index] = node.path
 
 	return info

@@ -18,5 +18,6 @@ if __name__ == "__main__":
 	info = utils.insertNode(info, pathShifts)
 	info = utils.calculateReachAndWait(info)
 
+	utils.printNodes(info)
 	print info['paths']
 	print utils.validatePath(info)
