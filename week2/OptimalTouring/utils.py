@@ -6,9 +6,13 @@ def RouteInitPhase(info):
 	i = 0
 	for cluster in clusters:
 		maximum = 0
+		currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + (nodes[maximum].visit / 3))
+
 		for j in range(0, len(cluster)):
-			if nodes[cluster[j]].profit > nodes[maximum].profit:
+			currentNode = nodes[cluster[j]]
+			if (currentNode.profit * currentNode.profit) / (currentNode.hours[i][0] + (currentNode.visit / 3)) > currentMaximumRatio:
 				maximum = cluster[j]
+				currentMaximumRatio = (nodes[maximum].profit * nodes[maximum].profit) / (nodes[maximum].hours[i][0] + (nodes[maximum].visit / 3))
 		paths[i].append(maximum)
 		i += 1
 
