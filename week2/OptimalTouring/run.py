@@ -11,4 +11,9 @@ if __name__ == "__main__":
 	info = graphGenerator.graphGen(info)
 	info = utils.associateInsertedMap(info)
 	info = utils.RouteInitPhase(info)
+	info = utils.calculateReachAndWait(info)
 	info = utils.calcMaxShift(info)
+
+	pathShifts = utils.generatePathShifts(info)
+
+	info = utils.insertNode(info, pathShifts)

@@ -78,7 +78,7 @@ def calculateReachAndWait(info):
 		i += 1
 
 
-def insertNode(info):
+def generatePathShifts(info):
 	pathShifts = [[] for _ in range(info['nDays'])]
 
 	"""If a node p is inserted in a route t between i and j, let shiftp = travelip +
@@ -91,11 +91,11 @@ def insertNode(info):
 		if info['inserted'][node.index]:
 			continue
 
-		globalMinShift = shift.Shift(math.inf, math.inf, math.inf)
+		globalMinShift = shift.Shift(math.inf, math.inf, math.inf, 0)
 
 		i = 0
 		for path in info['paths']:
-			localMinShift = shift.Shift(math.inf, math.inf, math.inf)
+			localMinShift = shift.Shift(math.inf, math.inf, math.inf, 0)
 
 			clusterParameter = 1
 
@@ -124,7 +124,7 @@ def insertNode(info):
 						continue
 
 					if shiftVal < localMinShift.val:
-						localMinShift = shift.Shift(it, i, shiftVal)
+						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 						continue
 
 				else if it == len(path) - 1:
@@ -146,7 +146,7 @@ def insertNode(info):
 						continue
 
 					if shiftVal < localMinShift.val:
-						localMinShift = shift.Shift(it, i, shiftVal)
+						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 
 				else:
 					prevNode = info['nodes'][path[it-1]]
@@ -168,10 +168,13 @@ def insertNode(info):
 						continue
 
 					if shiftVal < localMinShift.val:
-						localMinShift = shift.Shift(it, i, shiftVal)
+						localMinShift = shift.Shift(it, i, shiftVal, node.index, node.profit)
 
 			if globalMinShift.val > localMinShift.val:
 				globalMinShift = localMinShift
 			i += 1
 
-		pathShift[globalMinShift.path].append(globalMinShift)
+		pathShifts[globalMinShift.path].append(globalMinShift)
+
+
+	return pathShifts
