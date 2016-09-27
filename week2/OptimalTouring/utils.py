@@ -53,29 +53,36 @@ def calcMaxShift(info):
 				maxshiftBasedOnCloseTime = node.hours[day][1] - node.visit - node.reach
 				node.maxShift = min(maxShift,maxshiftBasedOnCloseTime)
 			info['nodes'][path[i]] = node
-			print "node:",path[i] , " maxshift:", node.maxShift, " reach time:", node.reach, " duration", node.visit, " closing time", node.hours[day][1]
+			#print "node:",path[i] , " maxshift:", node.maxShift, " reach time:", node.reach, " duration", node.visit, " closing time", node.hours[day][1]
 		day = day + 1;
 	return info
 
 def calculateReachAndWait(info):
 	paths = info['paths']
 
-	i = 0
+	day = 0
 	for path in paths:
 		startTime = 0
+		nodeIndex = 0;
 		for node in path:
 			currentNode = info['nodes'][node]
 
-			currentNode.reach = startTime
-			currentNode.wait = currentNode.hours[i][0] - startTime \
-			if currentNode.hours[i][0] > startTime else 0
-
-			if currentNode.wait > 0:
-				startTime = currentNode.hours[i][0] + currentNode.visit
+			if(nodeIndex == 0):
+				currentNode.reach = currentNode.hours[day][0]
 			else:
-				startTime += currentNode.visit
+				currentNode.reach = startTime
+			currentNode.wait = currentNode.hours[day][0] - startTime \
+			if currentNode.hours[day][0] > startTime else 0
+
+			if(nodeIndex < len(path)-1):
+				if currentNode.wait > 0:
+					startTime = currentNode.hours[day][0] + currentNode.visit + info['costMatrix'][path[i]][path[i+1]]
+				else:
+					startTime = startTime + currentNode.visit + info['costMatrix'][path[nodeIndex]][path[nodeIndex+1]]
+
 			info['nodes'][node] = currentNode
-		i += 1
+			nodeIndex += 1
+		day += 1
 
 
 def generatePathShifts(info):
