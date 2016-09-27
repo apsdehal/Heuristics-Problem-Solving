@@ -1,4 +1,5 @@
 import sys
+sys.path.insert(0, './jeopardy_helpers')
 import kmeans
 import graphGenerator
 from inputParser import InputParser
