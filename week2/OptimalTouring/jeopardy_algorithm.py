@@ -5,12 +5,12 @@ import graphGenerator
 from inputParser import InputParser
 import utils
 import nodeInserter
-import time
+import datetime
 from random import randint
 
 
 if __name__ == "__main__":
-	start = time.clock()
+	start = datetime.datetime.now()
 	parsedInfo = InputParser(sys.argv)
 	info = parsedInfo.getInfo()
 	info = graphGenerator.graphGen(info)
@@ -45,8 +45,8 @@ if __name__ == "__main__":
 
 		info = mainInfo
 
-		if time.clock() - start > 85:
-			# print time.clock() - start
+		t = datetime.datetime.now() - start
+		if t.seconds > 80:
 			break
 
 	utils.printPaths(bestPath)
