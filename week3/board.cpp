@@ -17,6 +17,8 @@ class Board {
 		int boardNegetive[HALF_BOARD_LENGTH + 1]; // indices 1 to 25 representing board from -25 to -1 
 
 		float torqueLeftPivot, torqueRightPivot ;
+		static const int torqueLeftBoardWeight = -9 ;	//Torque about left pivot due to weight of the board
+		static const int torqueRightBoardWeight = 3 ;	//Torque about right pivot due to weight of the board
 
 		void initWeights(){
 			for(int i=1;i<=WEIGHTS_AVAILABLE;i++) {
@@ -36,8 +38,7 @@ class Board {
 		Board(){
 			initWeights();
 			initBoard();
-			torqueLeftPivot = 0;
-			torqueRightPivot = 0;
+			calculateTorques();
 		}
 		void printBoard(){
 			if(LOGS_ENABLED) {
@@ -92,6 +93,7 @@ class Board {
 					//removing weight from available weights
 					weightsRemaining[weight] = false;
 					addedSuccessfully = true ;
+					calculateTorques();
 				}else{
 					if(LOGS_ENABLED) {
 						cout << "Class: Board.cpp, method:addWeight(), cannot add weight, position:"<<loc << endl;
@@ -104,6 +106,7 @@ class Board {
 					//removing weight from available weights
 					weightsRemaining[weight] = false;
 					addedSuccessfully = true ;
+					calculateTorques();
 				}else{
 					if(LOGS_ENABLED) {
 						cout << "Class: Board.cpp, method:addWeight(), cannot add weight, position:"<<loc << endl;
@@ -129,7 +132,7 @@ class Board {
 
 		//if this torque is positive then board is going to tip to left side
 		float calculateTorqueLeftPivot() {
-			float result = 0;
+			float result = torqueLeftBoardWeight;
 			float dist = 0 ;
 			float force = 0;
 
@@ -158,7 +161,7 @@ class Board {
 
 		//if this torque is positive then board is going to tip to right side
 		float calculateTorqueRightPivot() {
-			float result = 0;
+			float result = torqueRightBoardWeight;
 			float dist = 0 ;
 			float force = 0;
 
@@ -184,20 +187,71 @@ class Board {
 			}
 			return torqueRightPivot;
 		}
+
+		//return false if by adding this weight board will tip left
+		bool canAddWeightTipLeft(int weight, int loc){
+			float distFromLeftPivot = loc - LEFT_PIVOT_POSITION ;
+			float torqueLeft = weight*distFromLeftPivot;
+			if( (torqueLeftPivot-torqueLeft)> 0){
+				if(LOGS_ENABLED){
+					cout<< "Cannot add weight, board will tip left. weight:";
+					cout << weight << " ,location:" << loc << endl;
+				}
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		//return false if by adding this weight board will tip right
+		bool canAddWeightTipRight(int weight, int loc){
+			float distFromRightPivot = loc - RIGHT_PIVOT_POSITION ;
+			float torqueRight = weight*distFromRightPivot;
+			if( (torqueRightPivot + torqueRight)> 0){
+				if(LOGS_ENABLED){
+					cout<< "Cannot add weight, board will tip right. weight:";
+					cout << weight << " ,location:" << loc << endl;
+				}
+				return false;
+			}else{
+				return true ;
+			}
+		}
+
+		//return false if after adding this weight board is going to tip
+		bool canAddWeight(int weight, int loc) {
+			if(!weightsRemaining[weight]){
+				if(LOGS_ENABLED){
+					cout<< "Cannot add weight, weight is not avavilable. weight:";
+					cout << weight << " ,location:" << loc << endl;
+				}
+				return false;
+			}
+			if( (loc>=0 && boardPositive[loc]!=0 ) || (loc<0 && boardNegetive[abs(loc)]!=0)){
+				if(LOGS_ENABLED){
+					cout<< "Cannot add weight, location is already filled. weight:";
+					cout << weight << " ,location:" << loc << endl;
+				}
+				return false;
+			}
+			return (canAddWeightTipLeft(weight,loc) && canAddWeightTipRight(weight,loc));
+		}
 };
 
 int main(){
 	Board mBoard ;
-	mBoard.addWeight(5,20);
-	mBoard.addWeight(5,20);
-	mBoard.addWeight(5,-20);
-	mBoard.addWeight(5,-20);
-	mBoard.addWeight(8,-20);
-	mBoard.addWeight(100,-6);
-	mBoard.addWeight(8,0);
-	mBoard.addWeight(5,-4);
-	mBoard.printBoard();
-	mBoard.calculateTorques();
+	if(mBoard.canAddWeight(1,1))
+	mBoard.addWeight(1,1);
+	if(mBoard.canAddWeight(2,-4))
+	mBoard.addWeight(2,-4);
+	if(mBoard.canAddWeight(3,-8))
+	mBoard.addWeight(3,-8);
+	if(mBoard.canAddWeight(2,-1))
+	mBoard.addWeight(2,-1);
+	if(mBoard.canAddWeight(4,4))
+	mBoard.addWeight(4,4);
+	if(mBoard.canAddWeight(5,5))
+	mBoard.addWeight(5,5);
 
 	return 0;
 }
