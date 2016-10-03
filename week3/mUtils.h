@@ -1,0 +1,1 @@
+bool LOGS_ENABLED = true ;
