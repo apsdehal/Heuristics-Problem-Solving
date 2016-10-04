@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include "mUtils.h"
+#include "custom_socket.h"
+
 using namespace std;
 
 class Board {
