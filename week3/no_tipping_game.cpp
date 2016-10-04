@@ -308,6 +308,44 @@ class Board {
 			}
 			return (canAddWeightTipLeft(weight,loc) && canAddWeightTipRight(weight,loc));
 		}
+
+		bool hasWeight(int weight) {
+			for(int i=HALF_BOARD_LENGTH;i>=1;i--){
+					if(boardNegetive[i]==weight){
+						return true ;
+					}
+				}
+				for(int i=0;i<=HALF_BOARD_LENGTH;i++){
+					if(boardPositive[i]==weight){
+						return true ;
+					}
+				}
+				return false;
+		}
+
+		int locationOfWeight(int weight) {
+			for(int i=HALF_BOARD_LENGTH;i>=1;i--){
+					if(boardNegetive[i]==weight){
+						return -i ;
+					}
+				}
+				for(int i=0;i<=HALF_BOARD_LENGTH;i++){
+					if(boardPositive[i]==weight){
+						return i ;
+					}
+				}
+				return 0;
+		}
+
+		bool isTippingAfterRemoving(int weight, int loc){
+			bool result = false;
+			removeWeight(weight,loc);
+			if(calculateTorqueLeftPivot() < 0 && calculateTorqueRightPivot() <0){
+				result = true;
+			}
+			addWeight(weight,loc);
+			return result;
+		}
 };
 
 tcp_client c;
@@ -398,8 +436,33 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 	}
 }
 
-void playRemoveMove(){
-
+void playRemoveMove(Board & board){
+	bool weightFound = false;
+	for (int i = 1; i <= 15; i++)
+	{
+		if(board.hasWeight(i)){
+			int loc = board.locationOfWeight(i);
+			if(!board.isTippingAfterRemoving(i,loc)) {
+				board.removeWeight(i,loc);
+				string data = to_string(i) + " " + to_string(loc);
+    			c.send_data(data);
+    			weightFound = true;
+				break;
+			}
+		}
+	}
+	if(!weightFound) {
+		for (int i = 1; i <= 15; i++)
+	{
+		if(board.hasWeight(i)){
+			int loc = board.locationOfWeight(i);
+			board.removeWeight(i,loc);
+			string data = to_string(i) + " " + to_string(loc);
+    		c.send_data(data);
+			break;
+		}
+	}
+	}
 }
 
 int main(){
@@ -421,7 +484,7 @@ int main(){
 		if(tokens[0]=="1") {
 			playAddMove(mBoard,player_1_availableweights,player_2_availableweights,1,0);
 		} else if(tokens[0]=="2"){
-			playRemoveMove();
+			playRemoveMove(mBoard);
 		}
 		tokens = getTokens();
 	}
