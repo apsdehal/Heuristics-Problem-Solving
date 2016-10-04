@@ -404,7 +404,7 @@ void playRemoveMove(){
 
 int main(){
 	Board mBoard;
-	for (int i = 1; i < WEIGHTS_AVAILABLE; i++)
+	for (int i = 1; i <= WEIGHTS_AVAILABLE; i++)
 	{
 		player_1_availableweights[i] = true ;
 		player_2_availableweights[i] = true ;
@@ -418,7 +418,6 @@ int main(){
 
 	while(tokens[52]=="0") {
 		mBoard.updateBoard(tokens);
-		mBoard.printBoard();
 		if(tokens[0]=="1") {
 			playAddMove(mBoard,player_1_availableweights,player_2_availableweights,1,0);
 		} else if(tokens[0]=="2"){
