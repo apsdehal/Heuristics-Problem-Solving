@@ -1,0 +1,50 @@
+How to Play
+
+---Game Creation---
+
+To begin a game, run 'php main.php portnumber'. This will create a socket for communication to and from
+the server at port 'portnumber'
+
+---Playing the Game---
+
+Every turn the player will be sent a long string (s) containing the state of the game. It will include:
+
+s[0] - A flag to let the player know if they are in a stage to add weights to the board or remove 
+weights from the board: 1 = adding weights, 2 = removing weights.
+
+s[1:51] - The weights at each position on the board. 0 if the space is unoccupied and a weight can be
+placed there.
+
+s[52] - A flag to let the player know if the game has ended or not. 0 = The game is still going and the
+player must make a move, 1 = The game has ended.
+
+To make a move, the player must send a string to the server containing the following depending on the stage
+of the game:
+
+---Adding Weights
+
+If the player is still adding weights (i.e. has weights left to add), he must send the following to the server:
+'x y', where x is the weight in kg of the weight you'd like to add, and y is the position where you'd like to add
+it [-25, 25]. These numbers must be delimited by a single space.
+
+---Removing Weights
+
+If the player is removing weights, he must send a string containing the following:
+'x' where x is the position of the weight to be removed in his turn.
+
+---Illegal Moves---
+
+Making an illegal move will result in the player immediately losing the game. This includes:
+
+-Placing the same weight twice
+-Placing a weight on an occupied space
+-Attempting to place a weight in a space not represented on the board (ie. x > 25 || x < -25)
+-Attempting to remove a weight from an unoccupied space
+
+---Random test client---
+test.py is included to test your algorithm against. If running on energon2, be sure to ensure you're running
+Python 2.7. (If not, load it with 'module load python-2.7')
+
+To run the test script, use the same port number that using to call the php script. For example, using our test.py
+you should use this command 'python test.py portnumber', which portnumber is the same number given to the php script.
+Therefor your code should also accept port number as an argument.
