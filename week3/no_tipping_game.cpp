@@ -338,10 +338,10 @@ class Board {
 		}
 
 		bool isTippingAfterRemoving(int weight, int loc){
-			bool result = false;
+			bool result = true;
 			removeWeight(weight,loc);
 			if(calculateTorqueLeftPivot() < 0 && calculateTorqueRightPivot() <0){
-				result = true;
+				result = false;
 			}
 			addWeight(weight,loc);
 			return result;
