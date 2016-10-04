@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cmath>
 #include <list>
-#include "mUtils.h"
 #include "custom_socket.h"
 
 using namespace std;
@@ -91,30 +90,6 @@ class Board {
 
 			bool addedSuccessfully = false;
 
-			/*if(loc > HALF_BOARD_LENGTH || loc < -HALF_BOARD_LENGTH) {
-				if(LOGS_ENABLED){
-					cout << "Class: Board.cpp, method:addWeight(), location out of bound, " ;
-					cout <<"weight:" << weight <<", location:" << loc << endl;
-				}
-				return false;
-			}
-			//the weight should be less than max available weights
-			if( weight > WEIGHTS_AVAILABLE){
-				if(LOGS_ENABLED){
-					cout << "Class: Board.cpp, method:addWeight(), weight out of bound, " ;
-					cout <<"weight:" << weight <<", location:" << loc << endl;
-				}
-				return false;
-			}*/
-			//check if weight is available
-			/*if(!weightsRemaining[weight]){
-				if(LOGS_ENABLED){
-					cout << "Class: Board.cpp, method:addWeight(), weight not available, ";
-					cout <<"weight:" << weight <<", location:" << loc << endl;
-				}
-				return false;
-			}*/
-
 
 			if(loc >=0) {
 				if(boardPositive[loc] == 0){
@@ -123,10 +98,6 @@ class Board {
 					//weightsRemaining[weight] = false;
 					//addedSuccessfully = true ;
 					//calculateTorques();
-				}else{
-					if(LOGS_ENABLED) {
-						cout << "Class: Board.cpp, method:addWeight(), cannot add weight, position:"<<loc << endl;
-					}
 				}
 
 			}else{
@@ -136,10 +107,6 @@ class Board {
 					//weightsRemaining[weight] = false;
 					//addedSuccessfully = true ;
 					//calculateTorques();
-				}else{
-					if(LOGS_ENABLED) {
-						cout << "Class: Board.cpp, method:addWeight(), cannot add weight, position:"<<loc << endl;
-					}
 				}
 			}
 			return addedSuccessfully;
@@ -152,9 +119,6 @@ class Board {
 					return true;
 					//calculateTorques();
 				}else{
-					if(LOGS_ENABLED) {
-						cout << "Class: Board.cpp, method:removeWeight(), cannot remove weight, position:"<<loc << endl;
-					}
 					return false;
 				}
 
@@ -164,21 +128,12 @@ class Board {
 					//calculateTorques();
 					return true;
 				}else{
-					if(LOGS_ENABLED) {
-						cout << "Class: Board.cpp, method:removeWeight(), cannot remove weight, position:"<<loc << endl;
-					}
 					return false;
 				}
 			}
 		}
 
 		void printRemainingWeights(){
-			if(LOGS_ENABLED){
-				for(int i=1;i<=WEIGHTS_AVAILABLE;i++) {
-					if(player_1_availableweights[i])
-					cout << "weight:" << i  <<endl;
-				}
-			}
 		}
 
 		void calculateTorques() {
@@ -209,9 +164,6 @@ class Board {
 				}
 			}
 			torqueLeftPivot = result;
-			if(LOGS_ENABLED){
-				cout<< "torqueLeftPivot:" << torqueLeftPivot << endl;
-			}
 			return torqueLeftPivot;
 		}
 
@@ -238,9 +190,6 @@ class Board {
 				}
 			}
 			torqueRightPivot = result;
-			if(LOGS_ENABLED){
-				cout<< "torqueRightPivot:" << torqueRightPivot << endl;
-			}
 			return torqueRightPivot;
 		}
 
@@ -249,10 +198,6 @@ class Board {
 			float distFromLeftPivot = loc - LEFT_PIVOT_POSITION ;
 			float torqueLeft = weight*distFromLeftPivot;
 			if( (calculateTorqueLeftPivot()-torqueLeft)> 0){
-				if(LOGS_ENABLED){
-					cout<< "Cannot add weight, board will tip left. weight:";
-					cout << weight << " ,location:" << loc << endl;
-				}
 				return false;
 			} else {
 				return true;
@@ -264,10 +209,6 @@ class Board {
 			float distFromRightPivot = loc - RIGHT_PIVOT_POSITION ;
 			float torqueRight = weight*distFromRightPivot;
 			if( (calculateTorqueRightPivot() + torqueRight)> 0){
-				if(LOGS_ENABLED){
-					cout<< "Cannot add weight, board will tip right. weight:";
-					cout << weight << " ,location:" << loc << endl;
-				}
 				return false;
 			}else{
 				return true ;
@@ -292,18 +233,7 @@ class Board {
 
 		//return false if after adding this weight board is going to tip
 		bool canAddWeight(int weight, int loc) {
-			/*if(!weightsRemaining[weight]){
-				if(LOGS_ENABLED){
-					cout<< "Cannot add weight, weight is not avavilable. weight:";
-					cout << weight << " ,location:" << loc << endl;
-				}
-				return false;
-			}*/
 			if( (loc>=0 && boardPositive[loc]!=0 ) || (loc<0 && boardNegetive[abs(loc)]!=0)){
-				if(LOGS_ENABLED){
-					cout<< "Cannot add weight, location is already filled. weight:";
-					cout << weight << " ,location:" << loc << endl;
-				}
 				return false;
 			}
 			return (canAddWeightTipLeft(weight,loc) && canAddWeightTipRight(weight,loc));
@@ -395,8 +325,6 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 		int score = 0;
 		int weight = playableMoves[0][0];
 		int loc = playableMoves[0][0];
-
-		cout<<weight<<" "<<loc<<" "<<length<<endl;
 
 		for (int i=0;i<length;i++){
     		board.addWeight(playableMoves[i][0],playableMoves[i][1]);
