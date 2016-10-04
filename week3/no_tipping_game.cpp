@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include <unordered_map>
+#include <list>
 #include "mUtils.h"
 #include "custom_socket.h"
 
@@ -9,12 +9,15 @@ using namespace std;
 static const int MAX_DEPTH = 2 ;
 static const int LOOSING_SCORE = -1000 ;
 static const int WINNING_SCORE = 1000 ;
+static const int WEIGHTS_AVAILABLE = 15 ;
+bool player_1_availableweights[WEIGHTS_AVAILABLE + 1] ; // indices 1 to 15 representing weights 1kg..15kg
+bool player_2_availableweights[WEIGHTS_AVAILABLE + 1] ; // indices 1 to 15 representing weights 1kg..15kg
 
 class Board {
 	public :
 		static const int BOARD_LENGTT = 50 ;
 		static const int HALF_BOARD_LENGTH = 25;  
-		static const int WEIGHTS_AVAILABLE = 15 ;
+		
 		static const int INITIAL_BLOCK_WEIGHT = 3 ;
 		static const int INITIAL_BLOCK_POSITION = -4 ;
 		static const int LEFT_PIVOT_POSITION = -3 ;
@@ -61,7 +64,7 @@ class Board {
 			}
 		}
 		void printBoard(){
-			if(LOGS_ENABLED) {
+			if(true) {
 				cout<<"Printing all locations with non zero weights"<<endl;
 				for(int i=HALF_BOARD_LENGTH;i>=1;i--){
 					if(boardNegetive[i]!=0){
@@ -144,7 +147,7 @@ class Board {
 					//calculateTorques();
 				}else{
 					if(LOGS_ENABLED) {
-						cout << "Class: Board.cpp, method:addWeight(), cannot remove weight, position:"<<loc << endl;
+						cout << "Class: Board.cpp, method:removeWeight(), cannot remove weight, position:"<<loc << endl;
 					}
 					return false;
 				}
@@ -156,7 +159,7 @@ class Board {
 					return true;
 				}else{
 					if(LOGS_ENABLED) {
-						cout << "Class: Board.cpp, method:addWeight(), cannot remove weight, position:"<<loc << endl;
+						cout << "Class: Board.cpp, method:removeWeight(), cannot remove weight, position:"<<loc << endl;
 					}
 					return false;
 				}
@@ -265,19 +268,20 @@ class Board {
 			}
 		}
 
-		unordered_map<int,int>  getPlayableMoves(bool weightsAvailable[]) {
-			unordered_map<int,int> myMoves;
+		void getPlayableMoves(bool weightsAvailable[], int myMoves[1000][2], int &length) {
+			length = 0;
 			for(int i=WEIGHTS_AVAILABLE; i>=1; i--){
 				if(weightsAvailable[i]){
 					for(int j = -25; j<=25; j++){
 						if(canAddWeight(i,j)) {
-							myMoves.insert(make_pair<int,int>(i,j));
+							myMoves[length][0] = i;
+							myMoves[length][1] = j;
+							length++;
 							//cout<<"getPlayableMoves, weight:"<<i<<" location:"<<j<<endl;
 						}
 					}
 				}
 			}
-			return myMoves;
 		}
 
 		//return false if after adding this weight board is going to tip
@@ -333,46 +337,58 @@ string* getTokens() {
 }
 
 int playAddMove(Board board, bool player_1_availableweights[], bool player_2_availableweights[], int player, int depth) {
+	int length;
+	int playableMoves[1000][2];
 	if(player == 1){
-		unordered_map<int,int> moves = board.getPlayableMoves(player_1_availableweights);
-		if(moves.size()==0){
+		board.getPlayableMoves(player_1_availableweights, playableMoves, length);
+		if(length==0){
 			return LOOSING_SCORE;
 		}
 		else if(depth==MAX_DEPTH){
-			return moves.begin()->first;
+			return playableMoves[0][0];
 		}
-		int maxScore,score = 0;
+		int maxScore=0;
+		int score = 0;
 		int weight = 0;
 		int loc = 0;
-		for ( auto it = moves.begin(); it != moves.end(); ++it ){
-    		board.addWeight(it->first,it->second);
-    		player_1_availableweights[it->first] = false ;
+		for (int i=0;i<length;i++){
+    		board.addWeight(playableMoves[i][0],playableMoves[i][1]);
+    		player_1_availableweights[playableMoves[i][0]] = false ;
     		score = playAddMove(board,player_1_availableweights,player_2_availableweights,2, depth+1);
-    		cout<<"weight:"<<weight<<" location:"<<loc<<" score:"<<score<<endl;
     		if(score > maxScore) {
     			maxScore =  score ;
-    			weight = it->first;
-    			loc = it->second;
+    			weight = playableMoves[i][0];
+    			loc = playableMoves[i][1];
     		}
-    		board.removeWeight(it->first,it->second);
-    		player_1_availableweights[it->first] = true ;
+    		board.removeWeight(playableMoves[i][0],playableMoves[i][1]);
+    		player_1_availableweights[playableMoves[i][0]] = true ;
+    		if(maxScore==WINNING_SCORE){
+    			break;
+    		}
     	}
     	string data = to_string(weight) + " " + to_string(loc);
     	cout<<"data:"<<data<<endl;
     	c.send_data(data);
+    	player_1_availableweights[weight] = false;
     	return maxScore;
 	} else if(player==2){
-		unordered_map<int,int> moves = board.getPlayableMoves(player_2_availableweights);
-		if(moves.size()==0){
+		int score = 0;
+		int minScore = 1000;
+		board.getPlayableMoves(player_2_availableweights,playableMoves,length);
+		if(length==0){
 			return WINNING_SCORE;
 		}
-		for ( auto it = moves.begin(); it != moves.end(); ++it ){
-    		board.addWeight(it->first,it->second);
-    		player_2_availableweights[it->first] = false ;
-    		playAddMove(board,player_1_availableweights,player_2_availableweights,1, depth+1);
-    		board.removeWeight(it->first,it->second);
-    		player_2_availableweights[it->first] = true ;
+		for (int i=0;i<length;i++){
+    		board.addWeight(playableMoves[i][0],playableMoves[i][1]);
+    		player_2_availableweights[playableMoves[i][0]] = false ;
+    		int score = playAddMove(board,player_1_availableweights,player_2_availableweights,1, depth+1);
+    		board.removeWeight(playableMoves[i][0],playableMoves[i][1]);
+    		player_2_availableweights[playableMoves[i][0]] = true ;
+    		if(score <minScore) {
+    			minScore = score;
+    		}
     	}
+    	return minScore;
 	}
 }
 
@@ -382,6 +398,12 @@ void playRemoveMove(){
 
 int main(){
 	Board mBoard;
+	for (int i = 1; i < WEIGHTS_AVAILABLE; i++)
+	{
+		player_1_availableweights[i] = true ;
+		player_2_availableweights[i] = true ;
+	}
+	mBoard.printBoard();
 
 	cout << "Enter Portnumber:" ;
 	cin >> socketNo ;
@@ -392,7 +414,7 @@ int main(){
 		mBoard.updateBoard(tokens);
 		mBoard.printBoard();
 		if(tokens[0]=="1") {
-			playAddMove(mBoard,mBoard.weightsRemaining,mBoard.weightsRemaining,1,0);
+			playAddMove(mBoard,player_1_availableweights,player_2_availableweights,1,0);
 		} else if(tokens[0]=="2"){
 			playRemoveMove();
 		}
