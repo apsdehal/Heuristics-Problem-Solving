@@ -2,6 +2,7 @@
 #include <cmath>
 #include <list>
 #include "custom_socket.h"
+#include <omp.h>
 
 using namespace std;
 
@@ -326,26 +327,27 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 		int weight = playableMoves[0][0];
 		int loc = playableMoves[0][0];
 
+		#pragma omp parallel for
 		for (int i=0;i<length;i++){
-    		board.addWeight(playableMoves[i][0],playableMoves[i][1]);
-    		player_1_availableweights[playableMoves[i][0]] = false ;
-    		score = playAddMove(board,player_1_availableweights,player_2_availableweights,2, depth+1);
-    		if(score > maxScore) {
-    			maxScore =  score ;
-    			weight = playableMoves[i][0];
-    			loc = playableMoves[i][1];
-    		}
-    		board.removeWeight(playableMoves[i][0],playableMoves[i][1]);
-    		player_1_availableweights[playableMoves[i][0]] = true ;
-    		if(maxScore==WINNING_SCORE){
-    			break;
-    		}
-    	}
-    	string data = to_string(weight) + " " + to_string(loc);
-    	c.send_data(data);
-    	player_1_availableweights[weight] = false;
-    	board.addWeight(weight,loc);
-    	return maxScore;
+			board.addWeight(playableMoves[i][0],playableMoves[i][1]);
+			player_1_availableweights[playableMoves[i][0]] = false ;
+			score = playAddMove(board,player_1_availableweights,player_2_availableweights,2, depth+1);
+			if(score > maxScore) {
+				maxScore =  score ;
+				weight = playableMoves[i][0];
+				loc = playableMoves[i][1];
+			}
+			board.removeWeight(playableMoves[i][0],playableMoves[i][1]);
+			player_1_availableweights[playableMoves[i][0]] = true ;
+			if(maxScore==WINNING_SCORE){
+				break;
+			}
+		}
+		string data = to_string(weight) + " " + to_string(loc);
+		c.send_data(data);
+		player_1_availableweights[weight] = false;
+		board.addWeight(weight,loc);
+		return maxScore;
 	} else if(player==2){
 		int score = 0;
 		int minScore = 1000;
