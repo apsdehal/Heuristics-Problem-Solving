@@ -345,7 +345,7 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 			}
 		}
 
-		string data = to_string((long)weight) + " " + to_string((long)loc);
+		string data = to_string(static_cast<long long>(weight)) + " " + to_string(static_cast<long long>(loc));
 		c.send_data(data);
 		player_1_availableweights[weight] = false;
 		board.addWeight(weight,loc);
@@ -382,8 +382,7 @@ void playRemoveMove(Board & board){
 			if(!board.isTippingAfterRemoving(i,loc)) {
 				board.removeWeight(i,loc);
 				// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
-				cout<<loc<<endl;
-				string data = to_string((long)loc);
+				string data = to_string(static_cast<long long>(loc));
     			c.send_data(data);
     			weightFound = true;
 				break;
@@ -397,7 +396,7 @@ void playRemoveMove(Board & board){
 			int loc = board.locationOfWeight(i);
 			board.removeWeight(i,loc);
 			// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
-			string data = to_string((long)loc);
+			string data = to_string(static_cast<long long>(loc));
     		c.send_data(data);
 			break;
 		}
