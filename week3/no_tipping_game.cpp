@@ -42,6 +42,19 @@ class Board {
 			initBoard();
 			calculateTorques();
 		}
+
+		void updateBoard(string * tokens){
+			int index ;
+			for(int i=1;i<=51;i++){
+				index = abs(i - 26);
+				if(i<26) {
+					boardNegetive[index] = stoi(tokens[i]);
+				} else {
+					boardPositive[index] = stoi(tokens[i]);
+				}
+				
+			}
+		}
 		void printBoard(){
 			if(LOGS_ENABLED) {
 				cout<<"Printing all locations with non zero weights"<<endl;
@@ -240,20 +253,67 @@ class Board {
 		}
 };
 
-int main(){
-	Board mBoard ;
-	if(mBoard.canAddWeight(1,1))
-	mBoard.addWeight(1,1);
-	if(mBoard.canAddWeight(2,-4))
-	mBoard.addWeight(2,-4);
-	if(mBoard.canAddWeight(3,-8))
-	mBoard.addWeight(3,-8);
-	if(mBoard.canAddWeight(2,-1))
-	mBoard.addWeight(2,-1);
-	if(mBoard.canAddWeight(4,4))
-	mBoard.addWeight(4,4);
-	if(mBoard.canAddWeight(5,5))
-	mBoard.addWeight(5,5);
+tcp_client c;
+int socketNo = 5008;
 
+string* getTokens() {
+	string* tokens = new string[53];
+	string data;
+	while(1) {
+		data = c.receive(2048);
+		if (data.length() > 0) {
+			break;
+		}
+	}
+
+	string curr = "";
+
+	int j = 0;
+
+	for(int i = 0; i < data.length(); i++) {
+		if (data[i] == ' ') {
+			tokens[j] = curr;
+			curr = "";
+			j++;
+		} else {
+			curr += data[i];
+		}
+	}
+
+	tokens[j] = curr;
+	return tokens;
+
+}
+
+void playAddMove() {
+	c.send_data("4, -1");
+}
+
+void playRemoveMove(){
+
+}
+
+int main(){
+	Board mBoard;
+
+	cout << "Enter Portnumber:" ;
+	cin >> socketNo ;
+	c.conn("localhost", socketNo);
+	string * tokens = getTokens();
+
+	while(tokens[52]=="0") {
+		mBoard.updateBoard(tokens);
+		mBoard.printBoard();
+		if(tokens[0]=="1") {
+			playAddMove();
+		} else if(tokens[0]=="2"){
+			playRemoveMove();
+		}
+		tokens = getTokens();
+	}
+
+
+	c.closeconn();
 	return 0;
 }
+
