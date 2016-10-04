@@ -56,8 +56,14 @@ class Board {
 			for(int i=1;i<=51;i++){
 				index = abs(i - 26);
 				if(i<26) {
+					if(boardNegetive[index] != stoi(tokens[i])) {
+						player_2_availableweights[stoi(tokens[i])] = false;
+					}
 					boardNegetive[index] = stoi(tokens[i]);
 				} else {
+					if(boardPositive[index] != stoi(tokens[i])) {
+						player_2_availableweights[stoi(tokens[i])] = false;
+					}
 					boardPositive[index] = stoi(tokens[i]);
 				}
 				
@@ -85,7 +91,7 @@ class Board {
 
 			bool addedSuccessfully = false;
 
-			if(loc > HALF_BOARD_LENGTH || loc < -HALF_BOARD_LENGTH) {
+			/*if(loc > HALF_BOARD_LENGTH || loc < -HALF_BOARD_LENGTH) {
 				if(LOGS_ENABLED){
 					cout << "Class: Board.cpp, method:addWeight(), location out of bound, " ;
 					cout <<"weight:" << weight <<", location:" << loc << endl;
@@ -99,7 +105,7 @@ class Board {
 					cout <<"weight:" << weight <<", location:" << loc << endl;
 				}
 				return false;
-			}
+			}*/
 			//check if weight is available
 			/*if(!weightsRemaining[weight]){
 				if(LOGS_ENABLED){
@@ -114,9 +120,9 @@ class Board {
 				if(boardPositive[loc] == 0){
 					boardPositive[loc] = weight ;
 					//removing weight from available weights
-					weightsRemaining[weight] = false;
-					addedSuccessfully = true ;
-					calculateTorques();
+					//weightsRemaining[weight] = false;
+					//addedSuccessfully = true ;
+					//calculateTorques();
 				}else{
 					if(LOGS_ENABLED) {
 						cout << "Class: Board.cpp, method:addWeight(), cannot add weight, position:"<<loc << endl;
@@ -127,9 +133,9 @@ class Board {
 				if(boardNegetive[abs(loc)] == 0){
 					boardNegetive[abs(loc)] = weight ;
 					//removing weight from available weights
-					weightsRemaining[weight] = false;
-					addedSuccessfully = true ;
-					calculateTorques();
+					//weightsRemaining[weight] = false;
+					//addedSuccessfully = true ;
+					//calculateTorques();
 				}else{
 					if(LOGS_ENABLED) {
 						cout << "Class: Board.cpp, method:addWeight(), cannot add weight, position:"<<loc << endl;
@@ -169,7 +175,7 @@ class Board {
 		void printRemainingWeights(){
 			if(LOGS_ENABLED){
 				for(int i=1;i<=WEIGHTS_AVAILABLE;i++) {
-					if(weightsRemaining[i])
+					if(player_1_availableweights[i])
 					cout << "weight:" << i  <<endl;
 				}
 			}
@@ -336,7 +342,7 @@ string* getTokens() {
 
 }
 
-int playAddMove(Board board, bool player_1_availableweights[], bool player_2_availableweights[], int player, int depth) {
+int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_availableweights[], int player, int depth) {
 	int length;
 	int playableMoves[1000][2];
 	if(player == 1){
@@ -367,9 +373,9 @@ int playAddMove(Board board, bool player_1_availableweights[], bool player_2_ava
     		}
     	}
     	string data = to_string(weight) + " " + to_string(loc);
-    	cout<<"data:"<<data<<endl;
     	c.send_data(data);
     	player_1_availableweights[weight] = false;
+    	board.addWeight(weight,loc);
     	return maxScore;
 	} else if(player==2){
 		int score = 0;
