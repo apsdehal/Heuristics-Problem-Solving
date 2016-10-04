@@ -1,1 +1,1 @@
-bool LOGS_ENABLED = true ;
+bool LOGS_ENABLED = false ;
