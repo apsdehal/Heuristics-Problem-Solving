@@ -345,7 +345,7 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 			}
 		}
 
-		string data = to_string(weight) + " " + to_string(loc);
+		string data = to_string((long long)weight) + " " + to_string((long long)loc);
 		c.send_data(data);
 		player_1_availableweights[weight] = false;
 		board.addWeight(weight,loc);
@@ -358,6 +358,7 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 		if(length==0){
 			return WINNING_SCORE;
 		}
+		#pragma omp parallel for
 		for (int i=0;i<length;i++){
     		board.addWeight(playableMoves[i][0],playableMoves[i][1]);
     		player_2_availableweights[playableMoves[i][0]] = false ;
@@ -382,7 +383,7 @@ void playRemoveMove(Board & board){
 				board.removeWeight(i,loc);
 				// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
 				cout<<loc<<endl;
-				string data = to_string(loc);
+				string data = to_string((long long)loc);
     			c.send_data(data);
     			weightFound = true;
 				break;
@@ -396,7 +397,7 @@ void playRemoveMove(Board & board){
 			int loc = board.locationOfWeight(i);
 			board.removeWeight(i,loc);
 			// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
-			string data = to_string(loc);
+			string data = to_string((long long)loc);
     		c.send_data(data);
 			break;
 		}
