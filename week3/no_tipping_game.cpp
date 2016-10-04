@@ -191,6 +191,7 @@ class Board {
 				}
 			}
 			torqueRightPivot = result;
+
 			return torqueRightPivot;
 		}
 
@@ -343,10 +344,12 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 				break;
 			}
 		}
+
 		string data = to_string(weight) + " " + to_string(loc);
 		c.send_data(data);
 		player_1_availableweights[weight] = false;
 		board.addWeight(weight,loc);
+		// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
 		return maxScore;
 	} else if(player==2){
 		int score = 0;
@@ -377,7 +380,9 @@ void playRemoveMove(Board & board){
 			int loc = board.locationOfWeight(i);
 			if(!board.isTippingAfterRemoving(i,loc)) {
 				board.removeWeight(i,loc);
-				string data = to_string(i) + " " + to_string(loc);
+				// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
+				cout<<loc<<endl;
+				string data = to_string(loc);
     			c.send_data(data);
     			weightFound = true;
 				break;
@@ -390,7 +395,8 @@ void playRemoveMove(Board & board){
 		if(board.hasWeight(i)){
 			int loc = board.locationOfWeight(i);
 			board.removeWeight(i,loc);
-			string data = to_string(i) + " " + to_string(loc);
+			// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
+			string data = to_string(loc);
     		c.send_data(data);
 			break;
 		}
