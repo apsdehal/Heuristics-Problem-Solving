@@ -16,15 +16,15 @@ bool player_2_availableweights[WEIGHTS_AVAILABLE + 1] ; // indices 1 to 15 repre
 class Board {
 	public :
 		static const int BOARD_LENGTT = 50 ;
-		static const int HALF_BOARD_LENGTH = 25;  
-		
+		static const int HALF_BOARD_LENGTH = 25;
+
 		static const int INITIAL_BLOCK_WEIGHT = 3 ;
 		static const int INITIAL_BLOCK_POSITION = -4 ;
 		static const int LEFT_PIVOT_POSITION = -3 ;
 		static const int RIGHT_PIVOT_POSITION = -1 ;
 		bool weightsRemaining[WEIGHTS_AVAILABLE + 1] ; // indices 1 to 15 representing weights 1kg..15kg
 		int boardPositive[HALF_BOARD_LENGTH + 1]; // indices 0 to 25 representing board from -0 to 25
-		int boardNegetive[HALF_BOARD_LENGTH + 1]; // indices 1 to 25 representing board from -25 to -1 
+		int boardNegetive[HALF_BOARD_LENGTH + 1]; // indices 1 to 25 representing board from -25 to -1
 
 		float torqueLeftPivot, torqueRightPivot ;
 		static const int torqueLeftBoardWeight = -9 ;	//Torque about left pivot due to weight of the board
@@ -66,7 +66,7 @@ class Board {
 					}
 					boardPositive[index] = stoi(tokens[i]);
 				}
-				
+
 			}
 		}
 		void printBoard(){
@@ -87,7 +87,7 @@ class Board {
 
 		//Method to add weight on the board
 		//returns true if weight was successfully added
-		bool addWeight(int weight, int loc){ 
+		bool addWeight(int weight, int loc){
 
 			bool addedSuccessfully = false;
 
@@ -248,7 +248,7 @@ class Board {
 		bool canAddWeightTipLeft(int weight, int loc){
 			float distFromLeftPivot = loc - LEFT_PIVOT_POSITION ;
 			float torqueLeft = weight*distFromLeftPivot;
-			if( (torqueLeftPivot-torqueLeft)> 0){
+			if( (calculateTorqueLeftPivot()-torqueLeft)> 0){
 				if(LOGS_ENABLED){
 					cout<< "Cannot add weight, board will tip left. weight:";
 					cout << weight << " ,location:" << loc << endl;
@@ -263,7 +263,7 @@ class Board {
 		bool canAddWeightTipRight(int weight, int loc){
 			float distFromRightPivot = loc - RIGHT_PIVOT_POSITION ;
 			float torqueRight = weight*distFromRightPivot;
-			if( (torqueRightPivot + torqueRight)> 0){
+			if( (calculateTorqueRightPivot() + torqueRight)> 0){
 				if(LOGS_ENABLED){
 					cout<< "Cannot add weight, board will tip right. weight:";
 					cout << weight << " ,location:" << loc << endl;
@@ -375,7 +375,7 @@ string* getTokens() {
 		}
 	}
 
-	tokens[j] = curr;
+	tokens[j] = curr[0];
 	return tokens;
 
 }
@@ -393,8 +393,11 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 		}
 		int maxScore=0;
 		int score = 0;
-		int weight = 0;
-		int loc = 0;
+		int weight = playableMoves[0][0];
+		int loc = playableMoves[0][0];
+
+		cout<<weight<<" "<<loc<<" "<<length<<endl;
+
 		for (int i=0;i<length;i++){
     		board.addWeight(playableMoves[i][0],playableMoves[i][1]);
     		player_1_availableweights[playableMoves[i][0]] = false ;
@@ -493,4 +496,3 @@ int main(){
 	c.closeconn();
 	return 0;
 }
-
