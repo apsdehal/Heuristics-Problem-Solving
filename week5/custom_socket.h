@@ -119,7 +119,7 @@ bool tcp_client::send_data(string data)
         perror("Send failed : ");
         return false;
     }
-    cout<<"Data send\n";
+    //cout<<"Data send\n";
 
     return true;
 }
