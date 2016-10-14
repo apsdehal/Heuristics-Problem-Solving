@@ -123,7 +123,7 @@ void updatePull(int x, int y, int who){
 				int yDist = pow(y-j,2);
 				int dist = xDist + yDist;
 				if(dist!=0) {
-					pull[i][j] = pull[i][j] - 1/dist;
+					pull[i][j] = pull[i][j] - 1.0/dist;
 				}
 			}
 		}
@@ -190,7 +190,7 @@ int calcScoreByEvaluatingMove(int x,int y) {
 				xDist = pow(x-i,2);
 				yDist = pow(y-j,2);
 				dist = xDist + yDist;
-				if(dist!=0 && (pull[i][j] + 1/dist) > 0) {
+				if(dist!=0 && (pull[i][j] + 1.0/dist) > 0) {
 					score++;
 				}
 			}
@@ -215,5 +215,5 @@ bool feasibleMove(int x,int y){
 }
 
 float dist(int x1, int y1, int x2, int y2){
-	return sqrt(pow(x1-x2,2) + pow(y1-y2,2));
+	return  sqrt(pow(x1-x2,2) + pow(y1-y2,2));
 }
