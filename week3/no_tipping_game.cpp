@@ -3,8 +3,17 @@
 #include <list>
 #include "custom_socket.h"
 #include <omp.h>
+#include <cstdlib>
+#include <sstream>
 
 using namespace std;
+
+string convertToString(int number)
+{
+   stringstream ss;//create a stringstream
+   ss << number;//add number to the stream
+   return ss.str();//return a string with the contents of the stream
+}
 
 static const int MAX_DEPTH = 2 ;
 static const int LOOSING_SCORE = -1000 ;
@@ -345,7 +354,7 @@ int playAddMove(Board & board, bool player_1_availableweights[], bool player_2_a
 			}
 		}
 
-		string data = to_string(static_cast<long long>(weight)) + " " + to_string(static_cast<long long>(loc));
+		string data = convertToString(weight) + " " + convertToString(loc);
 		c.send_data(data);
 		player_1_availableweights[weight] = false;
 		board.addWeight(weight,loc);
@@ -382,7 +391,7 @@ void playRemoveMove(Board & board){
 			if(!board.isTippingAfterRemoving(i,loc)) {
 				board.removeWeight(i,loc);
 				// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
-				string data = to_string(static_cast<long long>(loc));
+				string data = convertToString(loc);
     			c.send_data(data);
     			weightFound = true;
 				break;
@@ -396,7 +405,7 @@ void playRemoveMove(Board & board){
 			int loc = board.locationOfWeight(i);
 			board.removeWeight(i,loc);
 			// cout<<board.calculateTorqueLeftPivot()<<board.calculateTorqueRightPivot()<<endl;
-			string data = to_string(static_cast<long long>(loc));
+			string data = convertToString(loc);
     		c.send_data(data);
 			break;
 		}
