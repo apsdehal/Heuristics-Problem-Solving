@@ -27,7 +27,8 @@ class Grid:
                     curr = self.board[i][j]
                     for k in range(1, 9):
                         for l in range(1, 9):
-                            self.board[i + k][j + l] = curr
+                            if i + k < self.WIDTH and j + l < self.HEIGHT
+                                self.board[i + k][j + l] = curr
 
 
     def getColor(self, i, j):
