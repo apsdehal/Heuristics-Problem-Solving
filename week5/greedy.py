@@ -2,11 +2,13 @@ from grid import Grid
 from coordinate import Coordinate
 from stone import Stone
 import math
+import coordinateList
 
 class Greedy:
     def __init__(self, stride):
         self.stride = stride;
         self.grid = Grid(stride)
+        self.coordList = coordinateList.getCoordinateList()
 
     def getAllTiles(self):
         locs = []
@@ -44,45 +46,53 @@ class Greedy:
 
         # Get last stone of opponent
         opponentLastStone = stones[1][-1]
-        coord = self.getTile(opponentLastStone.x, opponentLastStone.y)
 
-        finalI = coord.x
-        finalJ = coord.y
-        for i in range(coord.x, coord.x + self.stride):
-            for j in range(coord.y, coord.y + self.stride):
-                currStone = Stone(i, j)
-                flag = 0
+        if opponentLastStone.x + 66 < self.grid.WIDTH:
+            finalCoord = Coordinate(opponentLastStone.x + 66, opponentLastStone.y)
+        else:
+            finalCoord = Coordinate(opponentLastStone.x - 66, opponentLastStone.y)
 
-                if not opponentLastStone.getFeasible(currStone):
-                    continue
 
-                for l in range(0, 2):
-                    for stone in stones[l]:
-                        if not stone.getFeasible(currStone):
-                            flag = 1
-                            break
-                    if flag == 1:
+        for i in range(0, len(self.coordList), 8):
+            coord = self.coordList[i]
+
+            x = opponentLastStone.x + coord.x
+            y = opponentLastStone.y + coord.y
+
+            if x < 0 or y < 0 or x > self.grid.WIDTH or y > self.grid.HEIGHT:
+                continue
+
+            currStone = Stone(x, y)
+            flag = 0
+
+            if not opponentLastStone.getFeasible(currStone):
+                continue
+
+            for l in range(0, 2):
+                for stone in stones[l]:
+                    if not stone.getFeasible(currStone):
+                        flag = 1
                         break
-
                 if flag == 1:
-                    continue
+                    break
+
+            if flag == 1:
+                continue
 
 
-                stones[0].append(currStone)
+            stones[0].append(currStone)
 
-                self.grid.setColor(stones)
+            self.grid.setColor(stones)
 
-                ret = self.grid.getColorDist()
+            ret = self.grid.getColorDist()
 
-                stones[0].pop()
+            stones[0].pop()
 
-                if (ret[0] > num):
-                    num = ret[0]
-                    finalI = i
-                    finalJ = j
+            if (ret[0] > num):
+                num = ret[0]
+                finalCoord = Coordinate(currStone.x, currStone.y)
 
-
-        return Coordinate(finalI, finalJ)
+        return finalCoord
 
     def updatePull(self, stones, player):
         self.grid.updatePull(stones[player][-1], player)

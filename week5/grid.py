@@ -18,18 +18,16 @@ class Grid:
         if len(stones[0]) == 1 and len(stones[1]) == 0:
             self.setPatchColorSingle(0, 0, self.WIDTH, self.HEIGHT, 0)
         else:
-            for i in range(0, self.WIDTH, self.stride):
-                for j in range(0, self.HEIGHT, self.stride):
-                    coords = self.getMark(i, j)
-                    colors = []
-                    for coord in coords:
-                        c = self.getCurrentColor(coord, stones[0][-1])
-                        colors.append(c)
+            for i in range(0, self.WIDTH, 10):
+                for j in range(0, self.HEIGHT, 10):
+                    currCoord = Coordinate(i, j)
+                    self.board[i][j] = self.getCurrentColor(currCoord, stones[0][-1])
+                    curr = self.board[i][j]
+                    for k in range(1, 9):
+                        for l in range(1, 9):
+                            self.board[i + k][j + l] = curr
 
-                    if len(colors) == 2:
-                        self.setPatchColor(i, j, self.stride, self.stride, stones[0][-1])
-                    else:
-                        self.setPatchColorSingle(i, j, self.stride, self.stride, colors[0])
+
     def getColor(self, i, j):
         return self.board[i][j]
 
@@ -43,6 +41,9 @@ class Grid:
         return ret
 
     def getCurrentColor(self, coord, stone):
+        if self.pull[coord.x][coord.y] > 0:
+            return 0
+
         if coord.x == stone.x and coord.y == stone.y:
             return 0 if self.pull[coord.x][coord.y] > 0 else 1
 
@@ -96,10 +97,15 @@ class Grid:
         if player == 0:
             for i in range(1, self.WIDTH):
                 for j in range(1, self.HEIGHT):
-                    if not self.visited[i][j]:
-                        self.pull[i][j] += 1.0 / stone.getD(i, j)
+                    if i == stone.x and j == stone.y:
+                        continue
+                    self.pull[i][j] += 1.0 / stone.getD(i, j)
         else:
             for i in range(1, self.WIDTH):
                 for j in range(1, self.HEIGHT):
-                    if not self.visited[i][j]:
-                        self.pull[i][j] -= 1.0 / stone.getD(i, j)
+                    if i == stone.x and j == stone.y:
+                        continue
+                    self.pull[i][j] -= 1.0 / stone.getD(i, j)
+
+    def isVisited(self, coord):
+        return self.visited[coord.x][coord.y]

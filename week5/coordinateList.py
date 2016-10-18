@@ -1,5 +1,5 @@
 import math
-
+from coordinate import Coordinate
 myCoordinateList = []
 
 def getCoordinateList():
@@ -8,25 +8,23 @@ def getCoordinateList():
 		return myCoordinateList
 	xPrev = -1
 	for y in range(0,67):
-		x = math.ceil(math.sqrt(4356 - pow(y,2)))
+		x = math.ceil(math.sqrt(4356 - y ** 2))
 		x = int(x)
-		if(x!=xPrev):
-			myCoordinateList.append((x,y))
+		if(x != xPrev):
+			myCoordinateList.append(Coordinate(x, y))
 		xPrev = x;
 	for pair in reversed(myCoordinateList):
-		x = pair[0]* -1
-		y = pair[1]
+		x = pair.x * -1
+		y = pair.y
 		if(x!=0):
-			myCoordinateList.append((x,y))
-	
+			myCoordinateList.append(Coordinate(x,y))
+
 	for pair in myCoordinateList[:]:
-		x = pair[0]
-		y = pair[1] * -1
+		x = pair.x
+		y = pair.y * -1
 		if(y!=0):
-			myCoordinateList.append((x,y))
+			myCoordinateList.append(Coordinate(x,y))
 
 	return myCoordinateList
 
 m = getCoordinateList()
-for a in m:
-	print(a)
