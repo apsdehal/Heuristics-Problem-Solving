@@ -5,10 +5,10 @@ import math
 import coordinateList
 
 class Greedy:
-    def __init__(self, stride):
-        self.JUMP = 15
+    def __init__(self, stride, nStones):
+        self.JUMP = 5 if nStones < 5 else nStones
         self.stride = stride;
-        self.grid = Grid(stride)
+        self.grid = Grid(stride, self.JUMP)
         self.coordList = coordinateList.getCoordinateList()
 
     def getAllTiles(self):

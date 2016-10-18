@@ -3,8 +3,9 @@ class Grid:
     WIDTH = 1000
     HEIGHT = 1000
     STRIDE = 10
-    def __init__(self, stride = 50, stones = None):
+    def __init__(self, stride = 50, jump = 10, stones = None):
         self.stride = stride
+        self.STRIDE = 10 if jump < 10 else jump
         self.board = [[-1 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
         self.pull = [[0 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
         self.visited = [[0 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
