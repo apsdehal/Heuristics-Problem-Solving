@@ -2,6 +2,7 @@ from coordinate import Coordinate
 class Grid:
     WIDTH = 1000
     HEIGHT = 1000
+    STRIDE = 10
     def __init__(self, stride = 50, stones = None):
         self.stride = stride
         self.board = [[-1 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
@@ -18,8 +19,8 @@ class Grid:
         if len(stones[0]) == 1 and len(stones[1]) == 0:
             self.setPatchColorSingle(0, 0, self.WIDTH, self.HEIGHT, 0)
         else:
-            for i in range(0, self.WIDTH, 10):
-                for j in range(0, self.HEIGHT, 10):
+            for i in range(0, self.WIDTH, self.STRIDE):
+                for j in range(0, self.HEIGHT, self.STRIDE):
                     currCoord = Coordinate(i, j)
                     self.board[i][j] = self.getCurrentColor(currCoord, stones[0][-1])
                     curr = self.board[i][j]
