@@ -5,7 +5,7 @@ class Grid:
     STRIDE = 10
     def __init__(self, stride = 50, jump = 10, stones = None):
         self.stride = stride
-        self.STRIDE = 10 if jump < 10 else jump
+        self.STRIDE = 5
         self.board = [[-1 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
         self.pull = [[0 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
         self.visited = [[0 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
@@ -24,12 +24,6 @@ class Grid:
                 for j in range(0, self.HEIGHT, self.STRIDE):
                     currCoord = Coordinate(i, j)
                     self.board[i][j] = self.getCurrentColor(currCoord, stones[0][-1])
-                    curr = self.board[i][j]
-                    for k in range(1, 9):
-                        for l in range(1, 9):
-                            if i + k < self.WIDTH and j + l < self.HEIGHT:
-                                self.board[i + k][j + l] = curr
-
 
     def getColor(self, i, j):
         return self.board[i][j]
@@ -37,8 +31,8 @@ class Grid:
     def getColorDist(self):
         ret = [0, 1]
 
-        for i in range(0, self.WIDTH):
-            for j in range(0, self.HEIGHT):
+        for i in range(0, self.WIDTH, self.STRIDE):
+            for j in range(0, self.HEIGHT, self.STRIDE):
                 k = self.board[i][j]
                 ret[k] = ret[k] + 1
         return ret

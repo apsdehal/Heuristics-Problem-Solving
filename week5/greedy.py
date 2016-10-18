@@ -6,10 +6,7 @@ import coordinateList
 
 class Greedy:
     def __init__(self, stride, nStones):
-        self.JUMP = 14 if nStones < 11 else (nStones + 2)
-
-        if nStones < 5:
-            self.JUMP = 7
+        self.JUMP = 3
         self.stride = stride;
         self.grid = Grid(stride, self.JUMP)
         self.coordList = coordinateList.getCoordinateList()
