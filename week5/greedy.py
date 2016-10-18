@@ -55,7 +55,7 @@ class Greedy:
 
                 if not opponentLastStone.getFeasible(currStone):
                     continue
-                    
+
                 for l in range(0, 2):
                     for stone in stones[l]:
                         if not stone.getFeasible(currStone):
@@ -83,3 +83,6 @@ class Greedy:
 
 
         return Coordinate(finalI, finalJ)
+
+    def updatePull(self, stones, player):
+        self.grid.updatePull(stones[player][-1], player)

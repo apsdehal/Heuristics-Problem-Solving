@@ -1,3 +1,4 @@
+import math
 class Stone:
     MIN_DIST = 66 * 66
     def __init__(self, x, y):
@@ -9,3 +10,6 @@ class Stone:
             return False
         else:
             return True
+
+    def getD(self, x, y):
+        return math.sqrt((self.x - x) * (self.x - x) + (self.y - y) * (self.y - y))

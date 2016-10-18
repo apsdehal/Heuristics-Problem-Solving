@@ -7,7 +7,7 @@ class Voronoi:
 
 	HOST = 'localhost'
 	PORT = 9000
-	STRIDE = 130
+	STRIDE = 60
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -34,10 +34,12 @@ class Voronoi:
 				self.lastMoveOfOpponent_x = int(data[2 + self.noOfMoves * 3])
 				self.lastMoveOfOpponent_y = int(data[2 + self.noOfMoves * 3 + 1])
 				self.stones[1].append(Stone(self.lastMoveOfOpponent_x, self.lastMoveOfOpponent_y))
+				self.greedy.updatePull(self.stones, 1)
 
 			nextMove = self.greedy.move(self.stones)
 
 			self.stones[0].append(Stone(nextMove.x, nextMove.y))
+			self.greedy.updatePull(self.stones, 0)
 
 			self.s.sendall(str(nextMove.x) + " " + str(nextMove.y))
 
