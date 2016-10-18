@@ -6,6 +6,7 @@ import coordinateList
 
 class Greedy:
     def __init__(self, stride):
+        self.JUMP = 8
         self.stride = stride;
         self.grid = Grid(stride)
         self.coordList = coordinateList.getCoordinateList()
@@ -53,7 +54,7 @@ class Greedy:
             finalCoord = Coordinate(opponentLastStone.x - 66, opponentLastStone.y)
 
 
-        for i in range(0, len(self.coordList), 8):
+        for i in range(0, len(self.coordList), self.JUMP):
             coord = self.coordList[i]
 
             x = opponentLastStone.x + coord.x

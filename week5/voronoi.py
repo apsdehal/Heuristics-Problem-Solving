@@ -23,7 +23,6 @@ class Voronoi:
 		while 1:
 			serverResponse = self.s.recv(1024)
 			data = serverResponse.split()
-			print data
 
 			# Check if the game has ended
 			if int(data[0]) == 1:
