@@ -14,7 +14,7 @@ class Voronoi:
 	def __init__(self, stones):
 		self.s.connect((self.HOST, self.PORT))
 		self.maxStones = stones
-		self.greedy = Greedy(self.STRIDE, self.stones)
+		self.greedy = Greedy(self.STRIDE, self.maxStones)
 		self.stones = []
 		self.stones.append([])
 		self.stones.append([])
