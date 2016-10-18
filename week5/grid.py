@@ -2,7 +2,7 @@ from coordinate import Coordinate
 class Grid:
     WIDTH = 1000
     HEIGHT = 1000
-    STRIDE = 10
+    STRIDE = 15
     def __init__(self, stride = 50, stones = None):
         self.stride = stride
         self.board = [[-1 for i in range(0, self.WIDTH)] for j in range(0, self.HEIGHT)]
