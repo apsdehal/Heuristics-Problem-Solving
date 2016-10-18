@@ -1,12 +1,13 @@
 import socket
 import sys
 from greedy import Greedy
+from stone import Stone
 
 class Voronoi:
 
 	HOST = 'localhost'
 	PORT = 9000
-	STRIDE = 40
+	STRIDE = 130
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -14,6 +15,9 @@ class Voronoi:
 		self.s.connect((self.HOST, self.PORT))
 		self.maxStones = stones
 		self.greedy = Greedy(self.STRIDE)
+		self.stones = []
+		self.stones.append([])
+		self.stones.append([])
 
 	def start(self):
 		while 1:
@@ -29,9 +33,13 @@ class Voronoi:
 			if(self.noOfMoves >= 0):
 				self.lastMoveOfOpponent_x = int(data[2 + self.noOfMoves * 3])
 				self.lastMoveOfOpponent_y = int(data[2 + self.noOfMoves * 3 + 1])
+				self.stones[1].append(Stone(self.lastMoveOfOpponent_x, self.lastMoveOfOpponent_y))
 
+			nextMove = self.greedy.move(self.stones)
 
-			self.s.sendall(myMove)
+			self.stones[0].append(Stone(nextMove.x, nextMove.y))
+
+			self.s.sendall(str(nextMove.x) + " " + str(nextMove.y))
 
 		self.s.close()
 

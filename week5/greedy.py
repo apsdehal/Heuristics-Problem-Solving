@@ -26,7 +26,7 @@ class Greedy:
         return locs
 
     def getTile(self, x, y):
-        return Coordinate(math.floor(x / self.stride) * self.stride, math.floor(y / self.stride) * self.stride)
+        return Coordinate(int(math.floor(x / self.stride) * self.stride), int(math.floor(y / self.stride) * self.stride))
 
     def getOpponentStones(self, stones):
         return stones[1]
@@ -44,14 +44,30 @@ class Greedy:
 
         # Get last stone of opponent
         opponentLastStone = stones[1][-1]
-        loc = self.getStoneTile(opponentLastStone)
+        coord = self.getTile(opponentLastStone.x, opponentLastStone.y)
 
-        finalI = i
-        finalJ = j
-
-        for i in range(loc.x, loc.x + self.stride):
-            for j in range(loc.y, loc.y + self.stride):
+        finalI = coord.x
+        finalJ = coord.y
+        for i in range(coord.x, coord.x + self.stride):
+            for j in range(coord.y, coord.y + self.stride):
                 currStone = Stone(i, j)
+                flag = 0
+
+                if not opponentLastStone.getFeasible(currStone):
+                    continue
+                    
+                for l in range(0, 2):
+                    for stone in stones[l]:
+                        if not stone.getFeasible(currStone):
+                            flag = 1
+                            break
+                    if flag == 1:
+                        break
+
+                if flag == 1:
+                    continue
+
+
                 stones[0].append(currStone)
 
                 self.grid.setColor(stones)
@@ -66,4 +82,4 @@ class Greedy:
                     finalJ = j
 
 
-        return Location(finalI, finalJ)
+        return Coordinate(finalI, finalJ)
