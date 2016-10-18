@@ -27,7 +27,7 @@ class Grid:
                     curr = self.board[i][j]
                     for k in range(1, 9):
                         for l in range(1, 9):
-                            if i + k < self.WIDTH and j + l < self.HEIGHT
+                            if i + k < self.WIDTH and j + l < self.HEIGHT:
                                 self.board[i + k][j + l] = curr
 
 
