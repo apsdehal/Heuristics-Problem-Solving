@@ -17,11 +17,50 @@ class Hunter:
         else:
             return self.moveBack(info)
 
+    def preyInFront(self):
+        h2p =  self.preyCoord.x - self.hunterCoord.x, self.preyCoord.y - self.hunterCoord.y
+
+        return h2p[0] * self.hunterCoord.vx > 0 and h2p[1] * self.hunterCoord.vy > 0
+
     def moveFront(self, info):
-        return
+        if self.wallInBetween():
+            resp = self.removeAndBuildWall()
+        else:
+            resp = self.goodTimeForWall()
+            resp = {'wallAdd': resp}
+
+        if len(self.walls) >= self.maxWalls:
+            resp['wallDelete'] = self.removeWalls()
+
+        resp['gameNum'] = info['gameNum']
+        resp['tickNum'] = info['tickNum']
+
+        return resp
 
     def moveBack(self, info):
-        return
+        resp = self.goodTimeForWall()
+        resp = {'wallAdd': resp}
+
+        if len(self.walls) >= self.maxWalls:
+            resp['wallDelete'] = self.removeWalls()
+
+        resp['gameNum'] = info['gameNum']
+        resp['tickNum'] = info['tickNum']
+
+        return resp
+
+
+    def removeWalls(self):
+        currArea = self.preyArea(self.walls)
+
+        resp = []
+
+        for i in xrange(len(self.walls)):
+            area = self.preyArea(self.walls[:i] + self.walls[i + 1: ])
+            if area == currArea:
+                resp.append(i)
+
+        return resp
 
     def longDist(self):
         return max(abs(self.preyCoord.x - self.hunterCoord.x), abs(self.preyCoord.y - self.hunterCoord.y))
@@ -136,12 +175,19 @@ class Hunter:
         verArea = self.preyArea(self.walls[:] + [self.newVerticalWall()])
         horArea = self.preyArea(self.walls[:] + [self.newHorizontalWall()])
 
-        return min(verArea, horArea) < currArea
+        minArea = min(verArea, horArea)
+
+        if minArea > currArea:
+            return 0
+        else if minArea == verArea:
+            return 2
+        else:
+            return 1
 
 
-    def preyArea(self):
+    def preyArea(self, walls):
         left, right, top, down = 0, self.board.xSize - 1, self.board.ySize - 1, 0
-        for wall in self.walls:
+        for wall in walls:
             if wall.type == wall.HORIZONTAL:
                 dist = wall.coord - self.preyCoord.y
 
