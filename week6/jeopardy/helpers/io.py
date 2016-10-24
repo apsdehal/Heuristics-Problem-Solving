@@ -34,9 +34,11 @@ class IO:
 
             if 'hunter' in currResp:
                 self.playerType = 'hunter'
+                self.flag = 0
                 continue
             elif 'prey' in currResp:
                 self.playerType = 'prey'
+                self.flag = 0
                 continue
 
             currResp = currResp.split(' ')
