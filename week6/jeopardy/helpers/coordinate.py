@@ -4,3 +4,7 @@ class Coordinate:
         self.y = int(y)
         self.vx = int(vx)
         self.vy = int(vy)
+        self.direction = [self.vx, self.vy]
+
+    def equals(self, coord):
+        return self.x == coord.x and self.y == coord.y
