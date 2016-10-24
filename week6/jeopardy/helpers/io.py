@@ -52,8 +52,8 @@ class IO:
             if self.flag == 0:
                 self.flag = 1
                 self.player = Hunter(currResp) if self.playerType == 'hunter' else Prey(currResp)
-            else:
-                self.sendall(self.parseOutput(self.player.move(currResp)))
+
+            self.sendall(self.parseOutput(self.player.move(currResp)))
 
     def parseInput(self, resp):
         info = {};
