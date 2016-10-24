@@ -1,11 +1,11 @@
 from board import Board
+from wall import Wall
 
 class Hunter:
     def __init__(self, info):
         self.maxWalls = info['maxWalls']
         self.wallPlacementDelay = info['wallPlacementDelay']
         self.board = Board(info['boardSizeX'], info['boardSizeY'])
-        self.wallPlacementDelay = info['wallPlacementDelay']
 
     def move(self, info):
         self.walls = info['walls']
@@ -16,6 +16,12 @@ class Hunter:
             return self.moveFront(info)
         else:
             return self.moveBack(info)
+
+    def moveFront(self, info):
+        return
+
+    def moveBack(self, info):
+        return
 
     def longDist(self):
         return max(abs(self.preyCoord.x - self.hunterCoord.x), abs(self.preyCoord.y - self.hunterCoord.y))
@@ -51,7 +57,7 @@ class Hunter:
 
         return Wall(1, self.hunterCoord.x, lesser.y, greater.y)
 
-    def newVerticalWall(self):
+    def newHorizontalWall(self):
         greater = self.hunterCoord
         lesser = self.hunterCoord
 
@@ -85,3 +91,76 @@ class Hunter:
         return ret
 
     def removeAndBuildWall(self):
+
+        w = None
+        for i in xrange(len(self.walls)):
+            wall = self.walls[i]
+            if wall.type == wall.HORIZONTAL:
+
+                if self.hunterCoord.y < wall.coord < self.preyCoord.y \
+                or self.preyCoord.y < wall.coord < self.hunterCoord.y:
+                    w = i
+                    break
+
+            elif wall.type == wall.VERTICAL:
+
+                if self.hunterCoord.x < wall.coord < self.preyCoord.x \
+                or self.preyCoord.x < wall.coord < self.hunterCoord.x:
+                    w = i
+                    break
+
+
+        if self.walls[w].type == 0 and abs(self.walls[w].coord - self.hunterCoord.y) > 2:
+            return None
+
+        elif self.walls[w].type == 1 and abs(self.walls[w].coord - self.hunterCoord.x) > 2:
+            return None
+
+        ret = {}
+        ret['wallDelete'] = [w]
+
+        del self.walls[w]
+
+        verArea = self.preyArea(self.walls[:] + [self.newVerticalWall()])
+        horArea = self.preyArea(self.walls[:] + [self.newHorizontalWall()])
+
+        ret['wallAdd'] = 2 if verArea < horArea else 1
+
+        return ret
+
+    def goodTimeForWall(self):
+        if self.haveCooldown():
+            return False
+
+        currArea = self.preyArea(self.walls)
+        verArea = self.preyArea(self.walls[:] + [self.newVerticalWall()])
+        horArea = self.preyArea(self.walls[:] + [self.newHorizontalWall()])
+
+        return min(verArea, horArea) < currArea
+
+
+    def preyArea(self):
+        left, right, top, down = 0, self.board.xSize - 1, self.board.ySize - 1, 0
+        for wall in self.walls:
+            if wall.type == wall.HORIZONTAL:
+                dist = wall.coord - self.preyCoord.y
+
+                met = wall.start <= self.preyCoord.x <= wall.end
+
+                if met:
+                    if dist < 0 and abs(dist) < abs(down - self.preyCoord.y):
+                        down = wall.coord
+                    elif dist > 0 and dist <  abs(top - self.preyCoord.y):
+                        top = wall.coord
+            elif wall.type == wall.VERTICAL:
+                dist = wall.coord - self.preyCoord.x
+
+                met = wall.start <= self.preyCoord.y <= wall.end
+
+                if met:
+                    if dist < 0 and abs(dist) < abs(left - self.preyCoord.x):
+                        left = wall.coord
+                    elif dist > 0 and dist < abs(right - self.preyCoord.x):
+                        right = wall.coord
+
+        return abs(top - down) * abs(left - right)
