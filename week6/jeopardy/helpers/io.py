@@ -1,5 +1,6 @@
 import socket
 from hunter import Hunter
+from prey import Prey
 from coordinate import Coordinate
 from wall import Wall
 
@@ -16,7 +17,6 @@ class IO:
         prev = ""
         while 1:
             resp = self.s.recv(1024) + prev
-            print resp
 
             if '\n' not in resp:
                 prev = resp
@@ -28,10 +28,13 @@ class IO:
             resp.pop(0)
 
             prev = '\n'.join(resp)
-            print prev, currResp
+            print currResp
+
+            if 'done' in currResp:
+                break
 
             if 'sendname' in currResp:
-                self.s.sendall(self.teamname)
+                self.sendOutput(self.teamname)
                 continue
 
             if 'hunter' in currResp:
@@ -47,15 +50,13 @@ class IO:
 
             currResp = self.parseInput(currResp)
 
-            if self.playerType == 'prey' and int(currResp['tickNum']) % 2 == 0:
-                # not prey's move
-                continue
-
             if self.flag == 0:
                 self.flag = 1
                 self.player = Hunter(currResp) if self.playerType == 'hunter' else Prey(currResp)
 
-            self.sendall(self.parseOutput(self.player.move(currResp)))
+            self.sendOutput(self.parseOutput(self.player.move(currResp)))
+
+        self.s.close()
 
     def parseInput(self, resp):
         info = {};
@@ -70,7 +71,7 @@ class IO:
         info['boardSizeY'] = int(resp[6])
 
         info['currentWallTimer'] = resp[7]
-        inof['hunter'] = Coordinate(resp[8], resp[9], resp[10], resp[11])
+        info['hunter'] = Coordinate(resp[8], resp[9], resp[10], resp[11])
         info['prey'] = Coordinate(resp[12], resp[13])
 
         info['numWalls'] = int(resp[14])
@@ -78,7 +79,7 @@ class IO:
         info['walls'] = []
 
         for i in range(0, info['numWalls']):
-            info['walls'].append(Wall(resp[15 + i], resp[16 + i]. resp[17 + i], resp[18 + i]))
+            info['walls'].append(Wall(int(resp[15 + i]), int(resp[16 + i]), int(resp[17 + i]), int(resp[18 + i])))
             i += 3
 
         return info
@@ -106,4 +107,7 @@ class IO:
             output.append(str(infoMap['x']))
             output.append(str(infoMap['y']))
 
-        self.s.sendall(' '.join(output))
+        return " ".join(output)
+
+    def sendOutput(self, out):
+        self.s.sendall(out + "\n")
