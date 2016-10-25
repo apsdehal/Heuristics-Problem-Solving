@@ -8,14 +8,15 @@ class IO:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     teamname = 'jeopardy'
     def __init__(self, port):
-        prev = ""
         self.flag = 0
         self.portNo = port
-        self.s.connect(self.HOST, self.portNo)
+        self.s.connect((self.HOST, self.portNo))
 
     def start(self):
+        prev = ""
         while 1:
             resp = self.s.recv(1024) + prev
+            print resp
 
             if '\n' not in resp:
                 prev = resp
@@ -27,6 +28,7 @@ class IO:
             resp.pop(0)
 
             prev = '\n'.join(resp)
+            print prev, currResp
 
             if 'sendname' in currResp:
                 self.s.sendall(self.teamname)
@@ -79,7 +81,7 @@ class IO:
             info['walls'].append(Wall(resp[15 + i], resp[16 + i]. resp[17 + i], resp[18 + i]))
             i += 3
 
-        reutn info
+        return info
 
     def parseOutput(self, infoMap):
         output = []

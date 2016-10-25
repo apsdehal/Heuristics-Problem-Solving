@@ -15,6 +15,7 @@ if __name__ == '__main__':
     info['walls'].append(Wall(1, 100, 100, 300))
     info['walls'].append(Wall(1, 150, 100, 300))
     info['walls'].append(Wall(1, 250, 100, 300))
+    info['currentWallTimer'] = 0
 
     hunter = Hunter(info)
     hunter.walls = info['walls']

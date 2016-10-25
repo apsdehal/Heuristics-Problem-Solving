@@ -9,8 +9,9 @@ class Hunter:
 
     def move(self, info):
         self.walls = info['walls']
-        self.hunterCoord = info['hunter'];
+        self.hunterCoord = info['hunter']
         self.preyCoord = info['prey']
+        self.currentWallTimer = info['currentWallTimer']
 
         if self.preyInFront():
             return self.moveFront(info)
@@ -167,6 +168,9 @@ class Hunter:
 
         return ret
 
+    def havCooldown(self):
+        return int(self.currentWallTimer > 0)
+
     def goodTimeForWall(self):
         if self.haveCooldown():
             return False
@@ -179,7 +183,7 @@ class Hunter:
 
         if minArea > currArea:
             return 0
-        else if minArea == verArea:
+        elif minArea == verArea:
             return 2
         else:
             return 1
