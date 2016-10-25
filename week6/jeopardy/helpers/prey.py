@@ -28,11 +28,7 @@ class Prey:
                 else:
                     resp['x'] = self.x_coord + 1
                 if(self.y_coord < self.hunter_y):
-<<<<<<< HEAD
                     resp['y'] = self.y_coord + 1 
-=======
-                    resp['x'] = self.x_coord + 1
->>>>>>> 4887a7bb828b3906b038d9c345ffed98253b0fc6
                 else:
                     resp['y'] = self.y_coord - 1
                 return resp
