@@ -24,11 +24,15 @@ class Prey:
             #if hunter is very near and moving closer then move perpendicular
             if(dixt_x <= 10 and dist_y <= 10 and future_dist_x < dixt_x and future_dist_y < dist_y):
                 if(self.x_coord < self.hunter_x):
-                    resp['x'] = self.x_coord - 1 
+                    resp['x'] = self.x_coord - 1
                 else:
                     resp['x'] = self.x_coord + 1
                 if(self.y_coord < self.hunter_y):
+<<<<<<< HEAD
                     resp['y'] = self.y_coord + 1 
+=======
+                    resp['x'] = self.x_coord + 1
+>>>>>>> 4887a7bb828b3906b038d9c345ffed98253b0fc6
                 else:
                     resp['y'] = self.y_coord - 1
                 return resp
@@ -43,7 +47,7 @@ class Prey:
                 resp['y'] = self.y_coord - 1
             else:
                 resp['y'] = self.y_coord + 1
-
+                
         return resp
 
     def getHunterCollisionPoint(self,info):
