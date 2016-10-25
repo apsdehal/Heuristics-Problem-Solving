@@ -32,7 +32,7 @@ class Prey:
                 else:
                     resp['y'] = self.y_coord - 1
                 return resp
-            hitPoint = getHunterCollisionPoint(info)
+            hitPoint = self.getHunterCollisionPoint(info)
             hitPointX = hitPoint.x
             hitPointY = hitPoint.y
             if(hitPointX - self.x_coord > 0):
@@ -46,15 +46,15 @@ class Prey:
 
         return resp
 
-    def getHunterCollisionPoint(info):
+    def getHunterCollisionPoint(self,info):
         hunterX = info['hunter'].x
         hunterY = info['hunter'].y
         #TODO deep copy
         walls = info['walls']
-        walls.append(Wall.HORIZONTAL, 0, 0 ,299)
-        walls.append(Wall.HORIZONTAL, 299, 0 ,290)
-        walls.append(Wall.VERTICAL, 0, 0 ,299)
-        walls.append(Wall.VERTICAL, 299, 0 ,299)
+        walls.append(Wall(Wall.HORIZONTAL, 0, 0 ,299))
+        walls.append(Wall(Wall.HORIZONTAL, 299, 0 ,290))
+        walls.append(Wall(Wall.VERTICAL, 0, 0 ,299))
+        walls.append(Wall(Wall.VERTICAL, 299, 0 ,299))
         minDist = 10000
         hitPoint = None
         for wall in walls:
@@ -72,7 +72,7 @@ class Prey:
                     dist = abs(wall.coord - hunterX)
                     hitPointX = wall.coord
                     hitPointY = hunterY + dist * info['hunter'].vy
-                    if(hitPointY >= wall.start and hitPointy <= wall.end and dist < minDist):
+                    if(hitPointY >= wall.start and hitPointY <= wall.end and dist < minDist):
                         minDist = dist
                         hitPoint = Coordinate(hitPointX,hitPointY)
         return hitPoint
