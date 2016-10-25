@@ -1,8 +1,11 @@
 from coordinate import Coordinate
 class Prey:
     def __init__(self,info):
-    	self.x_coord = info['prey'].x
-    	self.y_coord = info['prey'].y
+        self.x_coord = info['prey'].x
+        self.y_coord = info['prey'].y
+        hunter_x = info['hunter'].x
+        hunter_y = info['hunter'].y
+
 
     def move(self,info):
         resp = {}
@@ -13,7 +16,13 @@ class Prey:
             resp['x'] = self.x_coord
             resp['y'] = self.y_coord
         else:
-            resp['x'] = self.x_coord + info['hunter'].vx
-            resp['y'] = self.y_coord + info['hunter'].vy
+            if(self.x_coord >= hunter_x ):
+                resp['x'] = self.x_coord + 1
+            else:
+                resp['x'] = self.x_coord - 1
+            if(self.y_coord >= hunter_y):
+                resp['y'] = self.y_coord + 1
+            else:
+                resp['y'] = self.y_coord - 1
 
         return resp
