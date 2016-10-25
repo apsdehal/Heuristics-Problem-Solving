@@ -28,9 +28,10 @@ class Prey:
                 else:
                     resp['x'] = self.x_coord + 1
                 if(self.y_coord < self.hunter_y):
-                    resp['x'] = self.x_coord + 1 
+                    resp['y'] = self.y_coord + 1 
                 else:
-                    resp['x'] = self.x_coord - 1
+                    resp['y'] = self.y_coord - 1
+                return resp
             hitPoint = getHunterCollisionPoint(info)
             hitPointX = hitPoint.x
             hitPointY = hitPoint.y
