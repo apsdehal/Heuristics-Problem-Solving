@@ -8,6 +8,10 @@ def hunterNextMove(info):
 	actual_x = apparent_x = x + info['hunter'].vx
 	actual_y = apparent_y = y + info['hunter'].vy
 	walls = info['walls']
+	walls.append(Wall.HORIZONTAL, 0, 0 ,299)
+	walls.append(Wall.HORIZONTAL, 299, 0 ,290)
+	walls.append(Wall.VERTICAL, 0, 0 ,299)
+	walls.append(Wall.VERTICAL, 299, 0 ,299)
 	intersectingWalls = []
 	for wall in walls:
 		if(wall.type == Wall.HORIZONTAL):
@@ -59,5 +63,8 @@ def hunterNextMove(info):
 		else:
 			actual_x = x
 			actual_y = y
-
+	walls.pop()
+	walls.pop()
+	walls.pop()
+	walls.pop()
 	return actual_x,actual_y
