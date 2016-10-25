@@ -79,8 +79,7 @@ class IO:
         info['walls'] = []
 
         for i in range(0, info['numWalls']):
-            info['walls'].append(Wall(int(resp[15 + i]), int(resp[16 + i]), int(resp[17 + i]), int(resp[18 + i])))
-            i += 3
+            info['walls'].append(Wall(int(resp[15 + i * 4]), int(resp[16 + i * 4]), int(resp[17 + i * 4]), int(resp[18 + i * 4])))
 
         return info
 

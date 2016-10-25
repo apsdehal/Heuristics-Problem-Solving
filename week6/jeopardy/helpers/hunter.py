@@ -1,5 +1,6 @@
 from board import Board
 from wall import Wall
+from coordinate import Coordinate
 
 class Hunter:
     INF = 1000000000
@@ -26,6 +27,7 @@ class Hunter:
             resp['wallDelete'] = []
 
         return resp
+
     def preyInFront(self):
         h2p =  self.preyCoord.x - self.hunterCoord.x, self.preyCoord.y - self.hunterCoord.y
 
@@ -82,8 +84,8 @@ class Hunter:
         return False
 
     def newVerticalWall(self):
-        greater = self.hunterCoord
-        lesser = self.hunterCoord
+        greater = Coordinate(self.hunterCoord.x, self.hunterCoord.y)
+        lesser = Coordinate(self.hunterCoord.x, self.hunterCoord.y)
 
         while not self.isOccupied(greater):
             if greater.equals(self.preyCoord):
@@ -95,13 +97,13 @@ class Hunter:
             if lesser.equals(self.preyCoord):
                 return False
 
-            lesser.y += 1
+            lesser.y -= 1
 
         return Wall(1, self.hunterCoord.x, lesser.y, greater.y)
 
     def newHorizontalWall(self):
-        greater = self.hunterCoord
-        lesser = self.hunterCoord
+        greater = Coordinate(self.hunterCoord.x, self.hunterCoord.y)
+        lesser = Coordinate(self.hunterCoord.x, self.hunterCoord.y)
 
         while not self.isOccupied(greater):
             if greater.equals(self.preyCoord):
@@ -113,7 +115,7 @@ class Hunter:
             if lesser.equals(self.preyCoord):
                 return False
 
-            lesser.x += 1
+            lesser.x -= 1
 
         return Wall(0, self.hunterCoord.y, lesser.x, greater.x)
 
@@ -166,12 +168,16 @@ class Hunter:
         ver = self.newVerticalWall()
         hor = self.newHorizontalWall()
         if ver != False:
-            verArea = self.preyArea(self.walls[:] + [ver])
+            self.walls.append(ver)
+            verArea = self.preyArea(self.walls)
+            self.walls.pop()
         else:
             verArea = self.INF
 
         if hor != False:
-            horArea = self.preyArea(self.walls[:] + [hor])
+            self.walls.append(hor)
+            horArea = self.preyArea(self.walls)
+            self.walls.pop()
         else:
             horArea = self.INF
 
@@ -192,14 +198,17 @@ class Hunter:
         ver = self.newVerticalWall()
         hor = self.newHorizontalWall()
         currArea = self.preyArea(self.walls)
-
         if ver != False:
-            verArea = self.preyArea(self.walls[:] + [ver])
+            self.walls.append(ver)
+            verArea = self.preyArea(self.walls)
+            self.walls.pop()
         else:
             verArea = self.INF
 
         if hor != False:
-            horArea = self.preyArea(self.walls[:] + [hor])
+            self.walls.append(hor)
+            horArea = self.preyArea(self.walls)
+            self.walls.pop()
         else:
             horArea = self.INF
 
@@ -207,10 +216,10 @@ class Hunter:
 
         if minArea > currArea:
             return 0
-        elif minArea == verArea:
-            return 2
-        else:
+        elif minArea == horArea:
             return 1
+        else:
+            return 2
 
 
     def preyArea(self, walls):

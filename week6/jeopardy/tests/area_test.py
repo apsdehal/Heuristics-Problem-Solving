@@ -9,16 +9,16 @@ if __name__ == '__main__':
     info['wallPlacementDelay'] = 1
     info['boardSizeX'] = 300
     info['boardSizeY'] = 300
+
     info['walls'] = []
-    info['walls'].append(Wall(0, 100, 100, 300))
-    info['walls'].append(Wall(0, 150, 100, 300))
-    info['walls'].append(Wall(1, 100, 100, 300))
-    info['walls'].append(Wall(1, 150, 100, 300))
-    info['walls'].append(Wall(1, 250, 100, 300))
+    info['walls'].append(Wall(0, 4, 0, 299))
+    info['walls'].append(Wall(0, 5, 0, 299))
+    info['walls'].append(Wall(0, 6, 0, 299))
+    info['walls'].append(Wall(0, 7, 0, 299))
     info['currentWallTimer'] = 0
 
     hunter = Hunter(info)
     hunter.walls = info['walls']
     hunter.preyCoord = Coordinate(230, 200)
 
-    print hunter.preyArea()
+    print hunter.preyArea(hunter.walls)
