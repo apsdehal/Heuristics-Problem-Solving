@@ -9,13 +9,17 @@ class Prey:
 
 
     def move(self,info):
+    	self.x_coord = info['prey'].x
+        self.y_coord = info['prey'].y
+        self.hunter_x = info['hunter'].x
+        self.hunter_y = info['hunter'].y
         resp = {}
         resp['gameNum'] = info['gameNum']
         resp['tickNum'] = info['tickNum']
 
         if int(resp['tickNum']) % 2 == 0:
-            resp['x'] = self.x_coord
-            resp['y'] = self.y_coord
+            resp['x'] = 0
+            resp['y'] = 0
         else:
             dixt_x = abs(self.hunter_x - self.x_coord)
             dist_y = abs(self.hunter_y - self.y_coord)
@@ -24,25 +28,29 @@ class Prey:
             #if hunter is very near and moving closer then move perpendicular
             if(dixt_x <= 10 and dist_y <= 10 and future_dist_x < dixt_x and future_dist_y < dist_y):
                 if(self.x_coord < self.hunter_x):
-                    resp['x'] = self.x_coord - 1
+                    resp['x'] = - 1
                 else:
-                    resp['x'] = self.x_coord + 1
+                    resp['x'] = 1
                 if(self.y_coord < self.hunter_y):
-                    resp['y'] = self.y_coord + 1 
+                    resp['y'] = 1 
                 else:
-                    resp['y'] = self.y_coord - 1
+                    resp['y'] = - 1
                 return resp
             hitPoint = self.getHunterCollisionPoint(info)
+            if(hitPoint==None):
+            	resp['x'] = 0
+            	resp['y'] = 0
+            	return resp
             hitPointX = hitPoint.x
             hitPointY = hitPoint.y
-            if(hitPointX - self.x_coord > 0):
-                resp['x'] = self.x_coord - 1
+            if((hitPointX - self.x_coord) > 0):
+                resp['x'] = - 1
             else:
-                resp['x'] = self.x_coord + 1
-            if(hitPointY - self.y_coord > 0):
-                resp['y'] = self.y_coord - 1
+                resp['x'] = 1
+            if((hitPointY - self.y_coord) > 0):
+                resp['y'] = - 1
             else:
-                resp['y'] = self.y_coord + 1
+                resp['y'] = 1
                 
         return resp
 
