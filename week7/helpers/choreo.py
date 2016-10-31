@@ -1,5 +1,8 @@
 from util import getPairs
 
-def move(reds,blues):
-	pairs = getPairs(reds,blues)
-	
+
+class Choreo:
+    def __init__(self, io):
+
+    def move(reds,blues):
+        pairs = getPairs(reds,blues)
