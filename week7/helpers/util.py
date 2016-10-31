@@ -1,18 +1,22 @@
+import sys
 def getParent(reds,blues):
 	taken = set()
-	pairs = {}
+	pairs = []
 	for red in reds:
 		minDist = sys.maxint
 		partner = None
 		for blue in blues:
-			if not blue in taken:
+			blue_str = " ".join(str(x) for x in blue)
+			if not blue_str in taken:
 				if dist(red, blue) < minDist:
 					minDist = dist(red,blue)
 					partner = blue
-		pairs[red] = blue
+					partner_str = blue_str
+		pairs.append([red,partner])
+		taken.add(partner_str)
 	return pairs
 
-def getPairs(red,blues):
+def getPairs(reds,blues):
 	return getParent(reds,blues)
 
 def dist(red, blue):
