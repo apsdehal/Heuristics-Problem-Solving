@@ -11,7 +11,7 @@ class IO:
         self.boardSize = boardSize
 
     def parseInput(self, filename, nStars, player):
-        self.nStars = nStars 
+        self.nStars = nStars
         red = []
         blue = []
         fh = open(filename)
@@ -93,6 +93,7 @@ class IO:
 
         for i in range(0, len(data), 2):
             stars.append((int(data[i]), int(data[i + 1])))
+            self.board[int(data[i])][int(data[i + 1])] = 'S'
 
         self.stars = stars
 
