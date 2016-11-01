@@ -8,8 +8,9 @@ def getParent(reds,blues):
 		for blue in blues:
 			blue_str = " ".join(str(x) for x in blue)
 			if not blue_str in taken:
-				if dist(red, blue) < minDist:
-					minDist = dist(red,blue)
+				distance = dist(red, blue)
+				if distance < minDist:
+					minDist = distance
 					partner = blue
 					partner_str = blue_str
 		pairs.append([red,partner])
