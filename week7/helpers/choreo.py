@@ -25,28 +25,39 @@ class Choreo:
                 redString = str(red[0]) + " " + str(red[1]) + " "
                 blueString = str(blue[0]) + " " + str(blue[1]) + " "
 
-                self.board[red[0]][red[1]] = '.'
-                self.board[blue[0]][blue[1]] = '.'
-
                 red = path[0]
                 blue = path[1]
 
+                moveOnlyOne = False
+                if red[0]==blue[0] and red[1]==blue[1] :
+                    moveOnlyOne = True
+
+                self.board[red[0]][red[1]] = '.'
+                if not moveOnlyOne:
+                    self.board[blue[0]][blue[1]] = '.'
+
                 redString = str(red[0]) + " " + str(red[1]) + " "
-                blueString = str(blue[0]) + " " + str(blue[1]) + " "
+                if not moveOnlyOne:
+                    blueString = str(blue[0]) + " " + str(blue[1]) + " "
 
                 red[0] = int(red[0])
                 red[1] = int(red[1])
 
-                blue[0] = int(blue[0])
-                blue[1] = int(blue[1])
+                if not moveOnlyOne:
+                    blue[0] = int(blue[0])
+                    blue[1] = int(blue[1])
 
                 self.board[red[0]][red[1]] = 'R'
-                self.board[blue[0]][blue[1]] = 'B'
+                if not moveOnlyOne:
+                    self.board[blue[0]][blue[1]] = 'B'
 
                 self.pairs[i][0] = red
-                self.pairs[i][1] = blue
+                if not moveOnlyOne:
+                    self.pairs[i][1] = blue
 
-                output += redString + blueString
+                output += redString
+                if not moveOnlyOne:
+                    output += blueString
 
         newPairs = []
 
