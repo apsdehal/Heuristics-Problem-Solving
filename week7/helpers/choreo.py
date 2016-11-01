@@ -6,14 +6,15 @@ class Choreo:
         pairs = getPairs(io.red,io.blue)
         self.paths_red = []
         self.paths_blue = []
+        self.board = io.board
         for red,blue in pairs:
             path_red = []
             path_blue = []
-            getPath(red,blue,path_red,path_blue)
-            paths_red.append(path_red)
-            paths_blue.append(path_blue)
+            self.getPath(red,blue,path_red,path_blue)
+            self.paths_red.append(path_red)
+            self.paths_blue.append(path_blue)
 
-    def move():
+    def move(self):
         dataToSend = ""
         for pathRed in self.paths_red:
             if(len(pathRed)>1):
@@ -27,7 +28,7 @@ class Choreo:
                 del pathBlue[0]
         return dataToSend
 
-    def getPath(red,blue,pathRed,pathBlue):
+    def getPath(self, red,blue,pathRed,pathBlue):
         pathRed.append([red[0],red[1]])
         pathBlue.append([blue[0],blue[1]])
         if(dist(red,blue)==1):
@@ -40,7 +41,7 @@ class Choreo:
             x = -1
         redNext = [red[0]-x,red[1]]
         blueNext = [blue[0]+x,blue[1]]
-        if x!=0 and isNotStarLoc(redNext,blueNext) and getPath(redNext,blueNext,pathRed,pathBlue):
+        if x!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         if(red[1]>blue[1]):
             y = 1
@@ -50,27 +51,27 @@ class Choreo:
             y = -1
         redNext = [red[0],red[1]-y]
         blueNext = [blue[0],blue[1]+y]
-        if y!=0 and isNotStarLoc(redNext,blueNext) and getPath(redNext,blueNext,pathRed,pathBlue):
+        if y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         redNext = [red[0]-x,red[1]]
         blueNext = [blue[0],blue[1]+y]
-        if x!=0 and y!=0 and isNotStarLoc(redNext,blueNext) and getPath(redNext,blueNext,pathRed,pathBlue):
+        if x!=0 and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         redNext = [red[0],red[1]-y]
         blueNext = [blue[0]+x,blue[1]]
-        if x!=0 and y!=0 and isNotStarLoc(redNext,blueNext) and getPath(redNext,blueNext,pathRed,pathBlue):
+        if x!=0 and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         pathRed.pop()
         pathBlue.pop()
         return False
 
-    def initStars(starData,board):
+    def initStars(self, starData,board):
         self.starData = starData
         self.board = board
         for star in starData:
             self.board[star[0]][star[1]] = '*'
 
-    def isNotStarLoc(loc1, loc2):
+    def isNotStarLoc(self, loc1, loc2):
         if(self.board[loc1[0]][loc1[1]]=='*' or self.board[loc2[0]][loc2[1]]=='*' ):
             return False
         return True

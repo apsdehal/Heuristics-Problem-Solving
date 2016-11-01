@@ -19,9 +19,9 @@ def getParent(reds,blues):
 	return pairs
 
 def getPairs(reds,blues):
-		myPairs = getParent(reds,blues)
-		maxDistance, maxDistanceIndex = getMaxDist(myPairs)
-		evolve(myPairs)
+	myPairs = getParent(reds,blues)
+	maxDistance, maxDistanceIndex = getMaxDist(myPairs)
+	evolve(myPairs)
 	return myPairs
 
 def dist(red, blue):
@@ -40,12 +40,11 @@ def getMaxDist(pairs):
 	maxDistance = 0
 	maxDistanceIndex = -1
 	for red, blue in pairs:
-		dist = dist(red,blue)
+		distance = dist(red,blue)
 		index += 1
-		if(dist >maxDistance):
-			maxDistance = dist
+		if(distance >maxDistance):
+			maxDistance = distance
 			maxDistanceIndex = index
 	return maxDistance , maxDistanceIndex
 def evolve(pairs):
 	temp = 0
-
