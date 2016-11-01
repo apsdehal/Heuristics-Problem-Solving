@@ -7,7 +7,7 @@ from choreo import Choreo
 class IO:
     def __init__(self, host, port, boardSize):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.connect((HOST, int(port)))
+        self.s.connect((host, int(port)))
         self.boardSize = boardSize
 
     def parseInput(self, filename, nStars, player):
@@ -50,7 +50,7 @@ class IO:
             self.playerName = "spoiler"
             self.player = Spoiler(self)
 
-    def setupBoard(self, red, blue):
+    def setupBoard(self, size, red, blue):
         board = [['.' for i in range(size)] for j in range(size)]
         for r in red:
             board[r[0]][r[1]] = 'R'
@@ -58,11 +58,11 @@ class IO:
             board[b[0]][b[1]] = 'B'
         self.board = board
 
-    def begin():
+    def begin(self):
         data = ""
         flag = 0
         while 1:
-            data += s.recv(1024)
+            data += self.s.recv(1024)
 
             if "$" in data:
                 break
@@ -81,7 +81,8 @@ class IO:
 
         self.s.close()
 
-    def sendOutput(self, move):
+    def sendOutput(self, moves):
+        print 'Hi'
         self.s.sendall('{}'.format(moves))
 
     def getStarConfiguration(self, data):
