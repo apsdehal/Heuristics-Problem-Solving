@@ -16,16 +16,35 @@ class Choreo:
 
     def move(self):
         dataToSend = ""
+        latestLocations = set()
         for pathRed in self.paths_red:
             if(len(pathRed)>1):
-                dataToSend = dataToSend + " " + str(pathRed[0][0]) + " " + str(pathRed[0][1])
-                dataToSend = dataToSend + " " + str(pathRed[1][0]) + " " + str(pathRed[1][1])
-                del pathRed[0]
+                newPos = str(pathRed[1][0]) + " " + str(pathRed[1][1])
+                oldPos = str(pathRed[0][0]) + " " + str(pathRed[0][1])
+                if not newPos in latestLocations:
+                    latestLocations.add(newPos)
+                    dataToSend = dataToSend + " " + str(pathRed[0][0]) + " " + str(pathRed[0][1])
+                    dataToSend = dataToSend + " " + newPos
+                    del pathRed[0]
+                elif not oldPos in latestLocations:
+                	latestLocations.add(oldPos)
+                else:
+                	print "error"
         for pathBlue in self.paths_blue:
             if(len(pathBlue)>1):
-                dataToSend = dataToSend + " " + str(pathBlue[0][0]) + " " + str(pathBlue[0][1])
-                dataToSend = dataToSend + " " + str(pathBlue[1][0]) + " " + str(pathBlue[1][1])
-                del pathBlue[0]
+                newPos = str(pathBlue[1][0]) + " " + str(pathBlue[1][1])
+                oldPos = str(pathBlue[0][0]) + " " + str(pathBlue[0][1])
+                if not newPos in latestLocations:
+                    latestLocations.add(newPos)
+                    dataToSend = dataToSend + " " + oldPos
+                    dataToSend = dataToSend + " " + newPos
+                    del pathBlue[0]
+                elif not oldPos in latestLocations:
+                	latestLocations.add(oldPos)
+                else:
+                	print "error"
+        print dataToSend
+        print "*****"
         return dataToSend
 
     def getPath(self, red,blue,pathRed,pathBlue):
