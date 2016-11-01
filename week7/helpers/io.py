@@ -76,7 +76,7 @@ class IO:
                 self.sendOutput(self.player.move())
 
             if "#" in data and flag == 1:
-                self.sendOutput(self.player.move(self.red,self.blue))
+                self.sendOutput(self.player.move())
                 data = ""
 
         self.s.close()
