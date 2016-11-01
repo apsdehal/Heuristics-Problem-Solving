@@ -9,7 +9,7 @@ class Spoiler:
         self.blues = io.blue
 
     def move(self):
-        stars = []
+        self.stars = []
         count = 0
         blueCentroid = utils.centroid(self.blues)
         redCentroid = utils.centroid(self.reds)
@@ -51,13 +51,13 @@ class Spoiler:
                         star.push(currBlue[1] + 1)
                         self.makeStarValid(star, 'y', 1)
 
-                stars.append(star)
+                self.stars.append(star)
                 count += 1
 
             if count == self.nStars:
-                return self.formatOutput(stars)
+                return self.formatOutput(self.stars)
 
-            # We still have more stars to place, we will place near to reds
+            # We still have more self.stars to place, we will place near to reds
             copyRpq = copy.deepcopy(rpq)
 
             while len(copyRpq) != 0 and count != self.nStars:
@@ -83,11 +83,11 @@ class Spoiler:
                         star.push(currRed[1] + 1)
                         self.makeStarValid(star, 'y', 1)
 
-                stars.append(star)
+                self.stars.append(star)
                 count += 1
 
             if count == self.nStars:
-                return self.formatOutput(stars)
+                return self.formatOutput(self.stars)
 
 
     def getDist(self, c1, c2):
@@ -99,3 +99,17 @@ class Spoiler:
             output += star[0] + " " + star[1] + " "
 
         return output.strip()
+
+    def makeStarValid(self, star, direction, step):
+        while board[star[0]][star[1]] != '.' and !self.isValid(star):
+            if direction == 'x':
+                star[0] += step
+            else:
+                star[1] += step
+
+    def isValid(self, star):
+        for s in self.stars:
+            if getDist(s, star) < 4:
+                return false
+
+        return true
