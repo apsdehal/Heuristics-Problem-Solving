@@ -18,21 +18,31 @@ class Choreo:
         dataToSend = ""
         for pathRed in self.paths_red:
             if(len(pathRed)>1):
-                dataToSend = dataToSend + " " + pathRed[0][0] + " " + pathRed[0][1]
-                dataToSend = dataToSend + " " + pathRed[1][0] + " " + pathRed[1][1]
+                dataToSend = dataToSend + " " + str(pathRed[0][0]) + " " + str(pathRed[0][1])
+                dataToSend = dataToSend + " " + str(pathRed[1][0]) + " " + str(pathRed[1][1])
                 del pathRed[0]
         for pathBlue in self.paths_blue:
             if(len(pathBlue)>1):
-                dataToSend = dataToSend + " " + pathBlue[0][0] + " " + pathBlue[0][1]
-                dataToSend = dataToSend + " " + pathBlue[1][0] + " " + pathBlue[1][1]
+                dataToSend = dataToSend + " " + str(pathBlue[0][0]) + " " + str(pathBlue[0][1])
+                dataToSend = dataToSend + " " + str(pathBlue[1][0]) + " " + str(pathBlue[1][1])
                 del pathBlue[0]
         return dataToSend
 
     def getPath(self, red,blue,pathRed,pathBlue):
         pathRed.append([red[0],red[1]])
         pathBlue.append([blue[0],blue[1]])
-        if(dist(red,blue)==1):
+        moveOnlyOne = False
+        moveOnlyOneInX = False
+        moveOnlyOneInY = False
+        distance = dist(red,blue)
+        if(distance==1):
             return True
+        if(distance==2):
+            moveOnlyOne = True
+        if(distance>2 and (abs(red[0] - blue[0]))==1):
+            moveOnlyOneInX = True
+        if(distance>2 and (abs(red[1] - blue[1]))==1):
+            moveOnlyOneInY = True
         if(red[0]>blue[0]):
             x = 1
         elif(red[0]==blue[0]):
@@ -40,8 +50,11 @@ class Choreo:
         else:
             x = -1
         redNext = [red[0]-x,red[1]]
-        blueNext = [blue[0]+x,blue[1]]
-        if x!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
+        if(not moveOnlyOne):
+            blueNext = [blue[0]+x,blue[1]]
+        else:
+            blueNext = [blue[0],blue[1]]
+        if not moveOnlyOneInX and x!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         if(red[1]>blue[1]):
             y = 1
@@ -50,15 +63,24 @@ class Choreo:
         else:
             y = -1
         redNext = [red[0],red[1]-y]
-        blueNext = [blue[0],blue[1]+y]
-        if y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
+        if(not moveOnlyOne):
+            blueNext = [blue[0],blue[1]+y]
+        else:
+            blueNext = [blue[0],blue[1]]
+        if not moveOnlyOneInY and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         redNext = [red[0]-x,red[1]]
-        blueNext = [blue[0],blue[1]+y]
+        if(not moveOnlyOne):
+            blueNext = [blue[0],blue[1]+y]
+        else:
+            blueNext = [blue[0],blue[1]+y]
         if x!=0 and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         redNext = [red[0],red[1]-y]
-        blueNext = [blue[0]+x,blue[1]]
+        if(not moveOnlyOne):
+            blueNext = [blue[0]+x,blue[1]]
+        else:
+            blueNext = [blue[0],blue[1]]
         if x!=0 and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
             return True
         pathRed.pop()
