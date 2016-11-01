@@ -3,116 +3,69 @@ from util import dist
 
 class Choreo:
     def __init__(self, io):
-        pairs = getPairs(io.red,io.blue)
-        self.paths_red = []
-        self.paths_blue = []
         self.board = io.board
-        for red,blue in pairs:
-            path_red = []
-            path_blue = []
-            self.getPath(red,blue,path_red,path_blue)
-            self.paths_red.append(path_red)
-            self.paths_blue.append(path_blue)
+        self.pairs = getPairs(io.red,io.blue)
+        self.boardSize = io.boardSize
 
     def move(self):
-        dataToSend = ""
-        latestLocations = set()
-        for pathRed in self.paths_red:
-            if(len(pathRed)>1):
-                newPos = str(pathRed[1][0]) + " " + str(pathRed[1][1])
-                oldPos = str(pathRed[0][0]) + " " + str(pathRed[0][1])
-                if not newPos in latestLocations:
-                    latestLocations.add(newPos)
-                    dataToSend = dataToSend + " " + str(pathRed[0][0]) + " " + str(pathRed[0][1])
-                    dataToSend = dataToSend + " " + newPos
-                    del pathRed[0]
-                elif not oldPos in latestLocations:
-                	latestLocations.add(oldPos)
-                else:
-                	print "error"
-        for pathBlue in self.paths_blue:
-            if(len(pathBlue)>1):
-                newPos = str(pathBlue[1][0]) + " " + str(pathBlue[1][1])
-                oldPos = str(pathBlue[0][0]) + " " + str(pathBlue[0][1])
-                if not newPos in latestLocations:
-                    latestLocations.add(newPos)
-                    dataToSend = dataToSend + " " + oldPos
-                    dataToSend = dataToSend + " " + newPos
-                    del pathBlue[0]
-                elif not oldPos in latestLocations:
-                	latestLocations.add(oldPos)
-                else:
-                	print "error"
-        print dataToSend
-        print "*****"
-        return dataToSend
+        toBeRemoved = []
+        output = ""
+        for i in range(len(self.pairs)):
+            curr = self.pairs[i]
+            red = curr[0]
+            blue = curr[1]
 
-    def getPath(self, red,blue,pathRed,pathBlue):
-        pathRed.append([red[0],red[1]])
-        pathBlue.append([blue[0],blue[1]])
-        moveOnlyOne = False
-        moveOnlyOneInX = False
-        moveOnlyOneInY = False
-        distance = dist(red,blue)
-        if(distance==1):
-            return True
-        if(distance==2):
-            moveOnlyOne = True
-        if(distance>2 and (abs(red[0] - blue[0]))==1):
-            moveOnlyOneInX = True
-        if(distance>2 and (abs(red[1] - blue[1]))==1):
-            moveOnlyOneInY = True
-        if(red[0]>blue[0]):
-            x = 1
-        elif(red[0]==blue[0]):
-            x = 0
-        else:
-            x = -1
-        redNext = [red[0]-x,red[1]]
-        if(not moveOnlyOne):
-            blueNext = [blue[0]+x,blue[1]]
-        else:
-            blueNext = [blue[0],blue[1]]
-        if not moveOnlyOneInX and x!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
-            return True
-        if(red[1]>blue[1]):
-            y = 1
-        elif(red[1]==blue[1]):
-            y = 0
-        else:
-            y = -1
-        redNext = [red[0],red[1]-y]
-        if(not moveOnlyOne):
-            blueNext = [blue[0],blue[1]+y]
-        else:
-            blueNext = [blue[0],blue[1]]
-        if not moveOnlyOneInY and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
-            return True
-        redNext = [red[0]-x,red[1]]
-        if(not moveOnlyOne):
-            blueNext = [blue[0],blue[1]+y]
-        else:
-            blueNext = [blue[0],blue[1]+y]
-        if x!=0 and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
-            return True
-        redNext = [red[0],red[1]-y]
-        if(not moveOnlyOne):
-            blueNext = [blue[0]+x,blue[1]]
-        else:
-            blueNext = [blue[0],blue[1]]
-        if x!=0 and y!=0 and self.isNotStarLoc(redNext,blueNext) and self.getPath(redNext,blueNext,pathRed,pathBlue):
-            return True
-        pathRed.pop()
-        pathBlue.pop()
-        return False
+            if self.getDist(red, blue) == 1:
+                toBeRemoved.append(i)
+                continue
+            else:
+                path = self.BFS(red, blue)
 
-    def initStars(self, starData,board):
-        self.starData = starData
-        self.board = board
-        for star in starData:
-            self.board[star[0]][star[1]] = '*'
+                redString = str[red[0]] + " " + str[red[1]] + " "
+                blueString = str[blue[0]] + " " + str[blue[1]] + " "
+
+                self.board[red[0]][red[1]] = '.'
+                self.board[blue[0]][blue[1]] = '.'
+                
+                red = path[1]
+                blue = path[len(path) - 2]
+                
+                redString = str[red[0]] + " " + str[red[1]] + " "
+                blueString = str[blue[0]] + " " + str[blue[1]] + " "
+            
+                self.board[red[0]][red[1]] = 'R'
+                self.board[blue[0]][blue[1]] = 'B'
+
+                self.pairs[i][0] = red 
+                self.pairs[i][1] = blue
+
+                output += redString + blueString
+
+        newPairs = []
+
+        for i in range(len(self.pairs)):
+            if i not in toBeRemoved:
+                newPairs.append(self.pairs[i])
+
+        self.pairs = newPairs
+
+        return output.strip()
+
+    def BFS(self, red, blue):
+        q = []
+        visited = [[0 for i in range(self.boardSize)] for j in range(self.boardSize)]
+
+        q.append(red)
+
+        while len(q):
+            curr = q.popleft()
+
+            if curr[0] - 1 
+
+    def getDist(self, c1, c2):
+        return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
 
     def isNotStarLoc(self, loc1, loc2):
-        if(self.board[loc1[0]][loc1[1]]=='*' or self.board[loc2[0]][loc2[1]]=='*' ):
+        if(self.board[loc1[0]][loc1[1]]=='S' or self.board[loc2[0]][loc2[1]]=='S' ):
             return False
         return True
