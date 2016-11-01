@@ -19,7 +19,10 @@ def getParent(reds,blues):
 	return pairs
 
 def getPairs(reds,blues):
-	return getParent(reds,blues)
+		myPairs = getParent(reds,blues)
+		maxDistance, maxDistanceIndex = getMaxDist(myPairs)
+		evolve(myPairs)
+	return myPairs
 
 def dist(red, blue):
 	return abs(red[0] - blue[0]) + abs(red[1]-blue[1])
@@ -31,3 +34,18 @@ def centroid(points):
     centroid_x = math.floor(sum(x_coords)/_len)
     centroid_y = math.floor(sum(y_coords)/_len)
     return [centroid_x, centroid_y]
+
+def getMaxDist(pairs):
+	index = 0
+	maxDistance = 0
+	maxDistanceIndex = -1
+	for red, blue in pairs:
+		dist = dist(red,blue)
+		index += 1
+		if(dist >maxDistance):
+			maxDistance = dist
+			maxDistanceIndex = index
+	return maxDistance , maxDistanceIndex
+def evolve(pairs):
+	temp = 0
+
