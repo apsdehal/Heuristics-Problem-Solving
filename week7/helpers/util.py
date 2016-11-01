@@ -38,6 +38,8 @@ def getParentPQ(reds, blues):
 			takenRed.add(curr[2])
 			takenBlue.add(curr[1])
 
+	print pairs
+
 	return pairs
 
 def getPairs(reds,blues):
