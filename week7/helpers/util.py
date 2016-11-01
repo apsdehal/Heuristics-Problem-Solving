@@ -1,5 +1,7 @@
 import sys
 import math
+import heapq
+
 def getParent(reds,blues):
 	taken = set()
 	pairs = []
@@ -18,8 +20,28 @@ def getParent(reds,blues):
 		taken.add(partner_str)
 	return pairs
 
+def getParentPQ(reds, blues):
+	takenRed = set()
+	takenBlue = set()
+	pairs = []
+
+	pq = []
+	for i in range(0, len(blues)):
+		for j in range(0, len(reds)):
+			heapq.heappush(pq, (dist(blues[i], reds[j]), i, j))
+
+	while len(pq) != 0:
+		curr = heapq.heappop(pq)
+
+		if not curr[1] in takenBlue and not curr[2] in takenRed:
+			pairs.append([reds[curr[2]], blues[curr[1]]])
+			takenRed.add(curr[2])
+			takenBlue.add(curr[1])
+
+	return pairs
+
 def getPairs(reds,blues):
-	myPairs = getParent(reds,blues)
+	myPairs = getParentPQ(reds,blues)
 	maxDistance, maxDistanceIndex = getMaxDist(myPairs)
 	evolve(myPairs)
 	return myPairs

@@ -88,7 +88,6 @@ class Spoiler:
             star.append(curr[0] + step)
             star.append(curr[1])
         else:
-            print "in make correct", curr, direction, step
             if curr[1] + step < 0 or curr[1] + step >= self.boardSize:
                 step = -1 * step
             star.append(curr[0])
