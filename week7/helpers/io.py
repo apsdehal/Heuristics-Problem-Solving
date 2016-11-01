@@ -82,7 +82,6 @@ class IO:
         self.s.close()
 
     def sendOutput(self, moves):
-        print 'Hi'
         self.s.sendall('{}'.format(moves))
 
     def getStarConfiguration(self, data):

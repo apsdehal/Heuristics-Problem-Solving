@@ -45,7 +45,9 @@ class Spoiler:
                     else:
                         self.makeCorrectStar(currBlue, star, 'y', 1)
 
-                self.stars.append(star)
+                if len(star) == 2:
+                    print "Selecting", star
+                    self.stars.append(star)
                 count += 1
 
             if count == self.nStars:
@@ -69,7 +71,9 @@ class Spoiler:
                     else:
                         self.makeCorrectStar(currRed, star, 'y', 1)
 
-                self.stars.append(star)
+                if len(star) == 2:
+                    print "Selecting", star
+                    self.stars.append(star)
                 count += 1
 
             if count == self.nStars:
@@ -77,7 +81,6 @@ class Spoiler:
 
     def makeCorrectStar(self, curr, star, direction, step):
         if direction == 'x':
-            print "in make correct", curr, direction, step
             if curr[0] + step < 0 or curr[0] + step >= self.boardSize:
                 # Reverse step if we have reach board end
                 # It indirectly means guy can't come from this direction
@@ -105,16 +108,43 @@ class Spoiler:
         return output.strip()
 
     def makeStarValid(self, star, direction, step):
-        print star, self.boardSize
+        count = 0
+        lastDirection = None
         while self.board[star[0]][star[1]] != '.' or not self.isValid(star):
+            if count >= 5 * self.boardSize:
+                if lastDirection == direction:
+                    if lastDirection == 'diagonal':
+                        self.getAValidStar(star)
+                        return
+                    direction = 'diagonal'
+                else:
+                    direction = 'y' if direction == 'x' else 'x'
+                lastDirection = direction
+                count = 0
             if direction == 'x':
                 if star[0] + step < 0 or star[0] + step >= self.boardSize:
                     step = -1 * step;
                 star[0] += step
-            else:
+                count += 1
+            elif direction == 'y':
                 if star[1] + step < 0 or star[1] + step >= self.boardSize:
                     step = -1 * step
                 star[1] += step
+                count += 1
+            else:
+                # We should not be here technically, but if we are it simply means
+                # board is so full that we aren't able to place star
+                stepX = step
+                stepY = step
+                if star[1] + stepY < 0 or star[1] + stepY >= self.boardSize:
+                    stepY = -1 * stepY
+
+                if star[0] + stepX < 0 or star[0] + stepX >= self.boardSize:
+                    stepX = -1 * stepX
+
+                star[0] += stepX
+                star[1] += stepY
+                count += 1
 
     def isValid(self, star):
         for s in self.stars:
@@ -122,3 +152,19 @@ class Spoiler:
                 return False
 
         return True
+
+    def getAValidStar(self, star):
+        flag = 0
+        for i in range(0, self.boardSize):
+            for j in range(0, self.boardSize):
+                star[0] = i
+                star[1] = j
+                if self.board[i][j] == '.' and self.isValid(star):
+                    flag = 1
+                    break
+            if flag == 1:
+                break
+
+        if flag == 0:
+            star.pop()
+            star.pop()
