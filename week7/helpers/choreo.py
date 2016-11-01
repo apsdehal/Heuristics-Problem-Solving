@@ -38,8 +38,8 @@ class Choreo:
                 red = path[0]
                 blue = path[1]
 
-                redString = str(red[0]) + " " + str(red[1]) + " "
-                blueString = str(blue[0]) + " " + str(blue[1]) + " "
+                redString += str(red[0]) + " " + str(red[1]) + " "
+                blueString += str(blue[0]) + " " + str(blue[1]) + " "
 
                 red[0] = int(red[0])
                 red[1] = int(red[1])
