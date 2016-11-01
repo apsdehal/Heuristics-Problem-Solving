@@ -37,15 +37,13 @@ class Choreo:
                     self.board[blue[0]][blue[1]] = '.'
 
                 redString = str(red[0]) + " " + str(red[1]) + " "
-                if not moveOnlyOne:
-                    blueString = str(blue[0]) + " " + str(blue[1]) + " "
+                blueString = str(blue[0]) + " " + str(blue[1]) + " "
 
                 red[0] = int(red[0])
                 red[1] = int(red[1])
 
-                if not moveOnlyOne:
-                    blue[0] = int(blue[0])
-                    blue[1] = int(blue[1])
+                blue[0] = int(blue[0])
+                blue[1] = int(blue[1])
 
                 self.board[red[0]][red[1]] = 'R'
                 if not moveOnlyOne:
