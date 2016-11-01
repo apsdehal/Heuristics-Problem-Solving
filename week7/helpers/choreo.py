@@ -26,17 +26,17 @@ class Choreo:
 
                 self.board[red[0]][red[1]] = '.'
                 self.board[blue[0]][blue[1]] = '.'
-                
+
                 red = path[1]
                 blue = path[len(path) - 2]
-                
+
                 redString = str[red[0]] + " " + str[red[1]] + " "
                 blueString = str[blue[0]] + " " + str[blue[1]] + " "
-            
+
                 self.board[red[0]][red[1]] = 'R'
                 self.board[blue[0]][blue[1]] = 'B'
 
-                self.pairs[i][0] = red 
+                self.pairs[i][0] = red
                 self.pairs[i][1] = blue
 
                 output += redString + blueString
@@ -54,13 +54,68 @@ class Choreo:
     def BFS(self, red, blue):
         q = []
         visited = [[0 for i in range(self.boardSize)] for j in range(self.boardSize)]
-
+        parent = {}
         q.append(red)
 
-        while len(q):
-            curr = q.popleft()
+        redCoordString = self.getCoordinateString(red)
+        blueCoordString = self.getCoordinateString(blue)
 
-            if curr[0] - 1 
+        parent[red] = None
+
+        while len(q):
+
+            curr = q.popleft()
+            currCoordinateString = self.getCoordinateString(curr)
+
+            if currCoordinateString == blueCoordString:
+                break
+
+            if curr[0] - 1 >= 0:
+                currBoardChar = self.board[curr[0] - 1][curr[1]]
+
+                if currentBoardChar == '.':
+                    next = [curr[0] - 1, curr[1]]
+                    parent[self.getCoordinateString(next)] = currCoordinateString
+                    q.append(next)
+
+            if curr[0] + 1 < self.boardSize:
+                currBoardChar = self.board[curr[0] + 1][curr[1]]
+
+                if currentBoardChar == '.':
+                    next = [curr[0] + 1, curr[1]]
+                    parent[self.getCoordinateString(next)] = currCoordinateString
+                    q.append(next)
+
+            if curr[1] - 1 >= 0:
+                currBoardChar = self.board[curr[0]][curr[1] - 1]
+
+                if currentBoardChar == '.':
+                    next = [curr[0], curr[1] - 1]
+                    parent[self.getCoordinateString(next)] = currCoordinateString
+                    q.append(next)
+
+            if curr[1] + 1 < self.boardSize:
+                currBoardChar = self.board[curr[0]][curr[1] + 1]
+
+                if currentBoardChar == '.':
+                    next = [curr[0], curr[1] + 1]
+                    parent[self.getCoordinateString(next)] = currCoordinateString
+                    q.append(next)
+
+        finalPath = []
+        currStr = blueCoordString
+
+        while parent[currStr] != redCoordString:
+            currStr = parent[currStr]
+
+        finalPath.append(currStr.split(" "))
+        finalPath.append(parent[blueCoordString].split(" "))
+
+        return finalPath
+
+
+    def getCoordinateString(self, c):
+        return str(c[0]) + " " + str(c[1])
 
     def getDist(self, c1, c2):
         return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1])
