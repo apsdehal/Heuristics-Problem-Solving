@@ -60,7 +60,7 @@ class Choreo:
         redCoordString = self.getCoordinateString(red)
         blueCoordString = self.getCoordinateString(blue)
 
-        parent[red] = None
+        parent[redCoordString] = None
 
         while len(q):
 
@@ -70,35 +70,39 @@ class Choreo:
             if currCoordinateString == blueCoordString:
                 break
 
-            if curr[0] - 1 >= 0:
+            if curr[0] - 1 >= 0 and not visited[curr[0] - 1][curr[1]]:
                 currBoardChar = self.board[curr[0] - 1][curr[1]]
 
                 if currentBoardChar == '.':
                     next = [curr[0] - 1, curr[1]]
+                    visited[curr[0] - 1][curr[1]] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
                     q.append(next)
 
-            if curr[0] + 1 < self.boardSize:
+            if curr[0] + 1 < self.boardSize and not visited[curr[0] + 1][curr[1]]:
                 currBoardChar = self.board[curr[0] + 1][curr[1]]
 
                 if currentBoardChar == '.':
                     next = [curr[0] + 1, curr[1]]
+                    visited[curr[0] + 1][curr[1]] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
                     q.append(next)
 
-            if curr[1] - 1 >= 0:
+            if curr[1] - 1 >= 0 and not visited[curr[0]][curr[1] - 1]:
                 currBoardChar = self.board[curr[0]][curr[1] - 1]
 
                 if currentBoardChar == '.':
                     next = [curr[0], curr[1] - 1]
+                    visited[curr[0]][curr[1] - 1] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
                     q.append(next)
 
-            if curr[1] + 1 < self.boardSize:
+            if curr[1] + 1 < self.boardSize and not visited[curr[0]][curr[1] + 1]:
                 currBoardChar = self.board[curr[0]][curr[1] + 1]
 
                 if currentBoardChar == '.':
                     next = [curr[0], curr[1] + 1]
+                    visited[curr[0]][curr[1] + 1] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
                     q.append(next)
 
