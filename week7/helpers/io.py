@@ -69,7 +69,6 @@ class IO:
 
             if "#" in data and flag == 0:
                 starData = self.getStarConfiguration(data)
-                self.player.initStars(starData,self.board)
                 flag = 1
 
             if "^" in data and flag == 0:
