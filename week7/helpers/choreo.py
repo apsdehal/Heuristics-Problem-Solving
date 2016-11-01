@@ -25,16 +25,18 @@ class Choreo:
                 redString = str(red[0]) + " " + str(red[1]) + " "
                 blueString = str(blue[0]) + " " + str(blue[1]) + " "
 
-                red = path[0]
-                blue = path[1]
-
                 moveOnlyOne = False
-                if red[0]==blue[0] and red[1]==blue[1] :
+
+                if path[0][0]== path[1][0] and path[0][1] == path[1][1] :
                     moveOnlyOne = True
 
                 self.board[red[0]][red[1]] = '.'
+
                 if not moveOnlyOne:
                     self.board[blue[0]][blue[1]] = '.'
+
+                red = path[0]
+                blue = path[1]
 
                 redString = str(red[0]) + " " + str(red[1]) + " "
                 blueString = str(blue[0]) + " " + str(blue[1]) + " "
@@ -75,16 +77,14 @@ class Choreo:
 
         redCoordString = self.getCoordinateString(red)
         blueCoordString = self.getCoordinateString(blue)
-
-        print redCoordString
-        print blueCoordString
+        
         parent[redCoordString] = None
 
         while len(q):
 
             curr = q.popleft()
             currCoordinateString = self.getCoordinateString(curr)
-            
+
             if currCoordinateString == blueCoordString:
                 break
 
