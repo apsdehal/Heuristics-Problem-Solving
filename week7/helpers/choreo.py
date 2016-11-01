@@ -1,5 +1,6 @@
 from util import getPairs
 from util import dist
+from collections import deque
 
 class Choreo:
     def __init__(self, io):
@@ -21,8 +22,8 @@ class Choreo:
             else:
                 path = self.BFS(red, blue)
 
-                redString = str[red[0]] + " " + str[red[1]] + " "
-                blueString = str[blue[0]] + " " + str[blue[1]] + " "
+                redString = str(red[0]) + " " + str(red[1]) + " "
+                blueString = str(blue[0]) + " " + str(blue[1]) + " "
 
                 self.board[red[0]][red[1]] = '.'
                 self.board[blue[0]][blue[1]] = '.'
@@ -30,8 +31,14 @@ class Choreo:
                 red = path[0]
                 blue = path[1]
 
-                redString = str[red[0]] + " " + str[red[1]] + " "
-                blueString = str[blue[0]] + " " + str[blue[1]] + " "
+                redString = str(red[0]) + " " + str(red[1]) + " "
+                blueString = str(blue[0]) + " " + str(blue[1]) + " "
+
+                red[0] = int(red[0])
+                red[1] = int(red[1])
+
+                blue[0] = int(blue[0])
+                blue[1] = int(blue[1])
 
                 self.board[red[0]][red[1]] = 'R'
                 self.board[blue[0]][blue[1]] = 'B'
@@ -52,7 +59,7 @@ class Choreo:
         return output.strip()
 
     def BFS(self, red, blue):
-        q = []
+        q = deque()
         visited = [[0 for i in range(self.boardSize)] for j in range(self.boardSize)]
         parent = {}
         q.append(red)
@@ -60,47 +67,69 @@ class Choreo:
         redCoordString = self.getCoordinateString(red)
         blueCoordString = self.getCoordinateString(blue)
 
+        print redCoordString
+        print blueCoordString
         parent[redCoordString] = None
 
         while len(q):
 
             curr = q.popleft()
             currCoordinateString = self.getCoordinateString(curr)
-
+            
             if currCoordinateString == blueCoordString:
                 break
 
             if curr[0] - 1 >= 0 and not visited[curr[0] - 1][curr[1]]:
+                if blue[0] == curr[0] - 1 and blue[1] == curr[1]:
+                    parent[blueCoordString] = currCoordinateString
+                    break
+
                 currBoardChar = self.board[curr[0] - 1][curr[1]]
 
-                if currentBoardChar == '.':
+
+                if currBoardChar == '.':
                     next = [curr[0] - 1, curr[1]]
                     visited[curr[0] - 1][curr[1]] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
                     q.append(next)
 
             if curr[0] + 1 < self.boardSize and not visited[curr[0] + 1][curr[1]]:
+                if blue[0] == curr[0] + 1 and blue[1] == curr[1]:
+                    parent[blueCoordString] = currCoordinateString
+                    break
+
                 currBoardChar = self.board[curr[0] + 1][curr[1]]
 
-                if currentBoardChar == '.':
+
+                if currBoardChar == '.':
                     next = [curr[0] + 1, curr[1]]
                     visited[curr[0] + 1][curr[1]] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
                     q.append(next)
 
             if curr[1] - 1 >= 0 and not visited[curr[0]][curr[1] - 1]:
+                if blue[0] == curr[0] and blue[1] == curr[1] - 1:
+                    parent[blueCoordString] = currCoordinateString
+                    break
+
                 currBoardChar = self.board[curr[0]][curr[1] - 1]
 
-                if currentBoardChar == '.':
+
+                if currBoardChar == '.':
                     next = [curr[0], curr[1] - 1]
                     visited[curr[0]][curr[1] - 1] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
                     q.append(next)
 
             if curr[1] + 1 < self.boardSize and not visited[curr[0]][curr[1] + 1]:
+                if blue[0] == curr[0] and blue[1] == curr[1] + 1:
+                    parent[blueCoordString] = currCoordinateString
+                    break
+
                 currBoardChar = self.board[curr[0]][curr[1] + 1]
 
-                if currentBoardChar == '.':
+
+                if currBoardChar == '.':
                     next = [curr[0], curr[1] + 1]
                     visited[curr[0]][curr[1] + 1] = 1
                     parent[self.getCoordinateString(next)] = currCoordinateString
