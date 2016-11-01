@@ -27,8 +27,8 @@ class Choreo:
                 self.board[red[0]][red[1]] = '.'
                 self.board[blue[0]][blue[1]] = '.'
 
-                red = path[1]
-                blue = path[len(path) - 2]
+                red = path[0]
+                blue = path[1]
 
                 redString = str[red[0]] + " " + str[red[1]] + " "
                 blueString = str[blue[0]] + " " + str[blue[1]] + " "
