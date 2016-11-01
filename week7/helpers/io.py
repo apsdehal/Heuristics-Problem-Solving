@@ -5,12 +5,13 @@ from spoiler import Spoiler
 from choreo import Choreo
 
 class IO:
-    def __init__(self, host = "localhost", port, boardSize):
+    def __init__(self, host, port, boardSize):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((HOST, int(port)))
         self.boardSize = boardSize
 
-    def parseInput(self, filename, player):
+    def parseInput(self, filename, nStars, player):
+        self.nStars = nStars 
         red = []
         blue = []
         fh = open(filename)
