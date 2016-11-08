@@ -136,34 +136,36 @@ class Hunter:
 
     def removeAndBuildWall(self):
 
-        w = None
-        for i in xrange(len(self.walls)):
+        wallsToBeDeleted = []
+        for i in xrange(0, len(self.walls)):
             wall = self.walls[i]
             if wall.type == wall.HORIZONTAL:
 
                 if self.hunterCoord.y < wall.coord < self.preyCoord.y \
                 or self.preyCoord.y < wall.coord < self.hunterCoord.y:
-                    w = i
-                    break
+
+                    if abs(wall.coord - self.hunterCoord.y) <= 2:
+                        wallsToBeDeleted.append(i)
 
             elif wall.type == wall.VERTICAL:
 
                 if self.hunterCoord.x < wall.coord < self.preyCoord.x \
                 or self.preyCoord.x < wall.coord < self.hunterCoord.x:
-                    w = i
-                    break
+                    if abs(wall.coord - self.hunterCoord.x) <= 2:
+                        wallsToBeDeleted.append(i)
 
         ret = {'wallAdd': 0}
-        if self.walls[w].type == 0 and abs(self.walls[w].coord - self.hunterCoord.y) > 2:
-            return ret
 
-        elif self.walls[w].type == 1 and abs(self.walls[w].coord - self.hunterCoord.x) > 2:
+        if len(wallsToBeDeleted) == 0:
             return ret
 
         ret = {}
-        ret['wallDelete'] = [w]
+        ret['wallDelete'] = wallsToBeDeleted
 
-        del self.walls[w]
+        j = 0
+        for i in wallsToBeDeleted:
+            self.walls.pop(i - j)
+            j += 1
 
         ver = self.newVerticalWall()
         hor = self.newHorizontalWall()

@@ -28,7 +28,7 @@ class IO:
             resp.pop(0)
 
             prev = '\n'.join(resp)
-            print currResp
+            # print currResp
 
             if 'done' in currResp:
                 break
