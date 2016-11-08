@@ -46,7 +46,7 @@ class Prey:
                 if(x_dist<y_dist):
                     resp['x'] = 0-self.hunter_vx
                     resp['y'] = self.hunter_vy
-                elif(y_dist<x_dist):
+                else:
                     resp['x'] = self.hunter_vx
                     resp['y'] = 0-self.hunter_vy
             elif(x_dist_future < x_dist):
