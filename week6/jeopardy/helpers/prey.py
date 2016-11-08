@@ -42,7 +42,14 @@ class Prey:
             y_dist = abs(self.hunter_y-self.y_coord)
             x_dist_future = abs(self.hunter_x + self.hunter_vx -self.x_coord)
             y_dist_future = abs(self.hunter_y + self.hunter_vy -self.y_coord)
-            if(x_dist_future < x_dist):
+            if(x_dist_future < x_dist and y_dist_future<y_dist):
+                if(x_dist<y_dist):
+                    resp['x'] = 0-self.hunter_vx
+                    resp['y'] = self.hunter_vy
+                elif(y_dist<x_dist):
+                    resp['x'] = self.hunter_vx
+                    resp['y'] = 0-self.hunter_vy
+            elif(x_dist_future < x_dist):
                 resp['x'] = self.hunter_vx
                 resp['y'] = 0-self.hunter_vy
             elif(y_dist_future<y_dist):
@@ -51,6 +58,6 @@ class Prey:
             else:
                 resp['x'] = 0
                 resp['y'] = 0
-            #print dist, " vx:", self.hunter_vx, " vy:", self.hunter_vy, " resp:", resp['x'], ",", resp['y']
+            print dist, " vx:", self.hunter_vx, " vy:", self.hunter_vy, " resp:", resp['x'], ",", resp['y']
             return resp
 
