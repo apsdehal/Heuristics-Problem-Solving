@@ -65,7 +65,7 @@ class IO:
             assert data[-1] == '\n'
             score = float(data[:-1])
 
-            if np.isclose(score, 1):
-                break
+            # if np.isclose(score, 1):
+            #     break
 
             print('i = %d score = %f' % (i, score))
