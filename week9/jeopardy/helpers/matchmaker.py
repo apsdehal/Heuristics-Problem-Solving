@@ -19,7 +19,7 @@ class Matchmaker:
     def train(self):
 
         # Add more training data in which score is 0, so we know which side is bad
-        for x in np.arange(-1.00, 1.01, 0.01):
+        for x in np.arange(-1.00, 1.05, 0.05):
             candidate = np.ones(self.numAttr) * x
             score = 0.0
             self.candidates.append((candidate, score))
