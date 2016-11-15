@@ -164,6 +164,8 @@ def getNoise(weights,response):
             addList.append((val,i))
     minLength = min(len(addList),len(subsList))
     maxIterations = int(5*len(weights)/100)
+    if(maxIterations<2):
+        return noise
     maxIterations -= maxIterations % 2
     count = 0
     for index in range(minLength):
