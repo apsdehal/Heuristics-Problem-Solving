@@ -108,3 +108,12 @@ def get_valid_weights(n):
     mWeights = np.concatenate((mlist_pos, mlist_neg))
     np.random.shuffle(mWeights)
     return mWeights
+
+def checkSum(weights):
+    sum_pos = np.sum(np.array([w for w in weights if w>=0]))
+    sum_neg = np.sum(np.array([w for w in weights if w < 0]))
+    if not np.isclose(sum_pos, 1):
+        return False
+    if not np.isclose(sum_neg, -1):
+        return False
+    return True 

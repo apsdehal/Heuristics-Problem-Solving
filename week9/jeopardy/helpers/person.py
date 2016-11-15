@@ -6,8 +6,11 @@ class Person:
 
     def getValidWeights(self):
         # Set initial weight here
-        self.initialWeights = utils.get_valid_weights(self.numAttr)
-        return self.initialWeights
+        while(True):
+            self.initialWeights = utils.get_valid_weights(self.numAttr)
+            if(utils.checkSum(self.initialWeights)):
+                return self.initialWeights
+        return self.initialWeights 
         
     def getIdealCandidate(self):
         # Initial setup for ideal candidate, change accordingly
