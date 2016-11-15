@@ -54,6 +54,25 @@ def get_valid_prob(n):
     p[-1] = 1 - np.sum(p[:-1])
     return p
 
+def getAbsMinNegPos(estimate, used):
+    'Returns smallest absolute negative and postive estimate'
+    miniNeg = 2
+    miniNegI = 0
+    miniPos = 2
+    miniPosI = 0
+    for i in range(len(estimate)):
+        if i in used:
+            continue
+        e = estimate[i]
+        if e < 0 and abs(e) < miniNeg:
+            miniNeg = abs(e)
+            miniNegI = i
+        elif e > 0 and e < miniPos:
+            miniPos = abs(e)
+            miniPosI = i
+
+    return (miniNegI, miniPosI)
+
 def get_valid_weights(n):
     total_nums = n
     pos_nums = 38*total_nums/100

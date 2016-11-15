@@ -8,6 +8,7 @@ class Matchmaker:
         self.numAttr = numAttr
         self.initialCandidates = []
         self.lam = lam
+        self.usedMiniIndex = []
         random.seed(None)
 
     def parseInitialData(self, data):
@@ -88,17 +89,23 @@ class Matchmaker:
     def addNoise(self):
         cWeights = self.estimate.copy()
 
-        print cWeights
+        minis = utils.getAbsMinNegPos(cWeights, self.usedMiniIndex)
 
-        noise = np.random.normal(size = self.numAttr)
-        change = np.asarray(np.abs(noise) > 2.0, dtype = int)
+        cWeights[minis[0]] = -1 * cWeights[minis[0]]
+        cWeights[minis[1]] = -1 * cWeights[minis[1]]
 
-        for i in range(len(change)):
-            if change[i] > 0.0:
-                if random.random() > 0.5:
-                    cWeights[i] += cWeights[i] * 0.2
-                else:
-                    cWeights[i] -= cWeights[i] * 0.2
+        self.usedMiniIndex.append(minis[0])
+        self.usedMiniIndex.append(minis[1])
+
+        # noise = np.random.normal(size = self.numAttr)
+        # change = np.asarray(np.abs(noise) > 2.0, dtype = int)
+        #
+        # for i in range(len(change)):
+        #     if change[i] > 0.0:
+        #         if random.random() > 0.5:
+        #             cWeights[i] += cWeights[i] * 0.2
+        #         else:
+        #             cWeights[i] -= cWeights[i] * 0.2
 
         cand = np.array(cWeights > 0, dtype = float).reshape(self.numAttr)
 
