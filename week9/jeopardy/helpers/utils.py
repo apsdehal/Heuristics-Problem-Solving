@@ -10,6 +10,10 @@ def binary_candidate_score_to_msg(score, candidate):
     msg += ','.join(strings) + '\n'
     return msg
 
+def parseCandidateData(data):
+    score = float(data[:7])
+    candidate = [float (x) for x in data[8:][:-1].split(',')]
+    return (candidate, score)
 
 def floats_to_msg4(arr):
     'Convert float array to proper msg format with 4 decimals'
@@ -49,7 +53,6 @@ def get_valid_prob(n):
     # ensure p sums to 1 after rounding
     p[-1] = 1 - np.sum(p[:-1])
     return p
-
 
 def get_valid_weights(n):
     total_nums = n
