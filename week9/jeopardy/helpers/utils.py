@@ -1,4 +1,5 @@
 import numpy as np
+from heapq import heappush, heappop
 
 def binary_candidate_score_to_msg(score, candidate):
     msg = '%+1.4f:' % score
@@ -14,6 +15,10 @@ def parseCandidateData(data):
     score = float(data[:7])
     candidate = [float (x) for x in data[8:][:-1].split(',')]
     return (candidate, score)
+
+def parseResponse(guess):
+    response = [float (x) for x in guess[:-1].split(',')]
+    return response
 
 def floats_to_msg4(arr):
     'Convert float array to proper msg format with 4 decimals'
@@ -138,4 +143,58 @@ def checkSum(weights):
         return False
     if not np.isclose(sum_neg, -1):
         return False
-    return True 
+    return True
+
+def getNoise(weights,response):
+    noise = np.zeros(len(weights))
+    pos_heap = []
+    neg_heap = []
+    for index in range(len(weights)):
+        if(weights[index]>0):
+            heappush(pos_heap, (weights[index],index))
+        if(weights[index]<0):
+            heappush(neg_heap, (-1 * weights[index],index))
+    addList = []
+    subsList = []
+    while(len(pos_heap)):
+        (val,i) = heappop(pos_heap)
+        if(val>=.05 and response[i]>0):
+            subsList.append((val,i));
+        if(val>=.05 and response[i]==0):
+            addList.append((val,i))
+    minLength = min(len(addList),len(subsList))
+    maxIterations = int(5*len(weights)/100)
+    maxIterations -= maxIterations % 2
+    count = 0
+    for index in range(minLength):
+        (addVal,addIndex) = addList[index]
+        (subsVal,subsIndex) = subsList[index]
+        val = min(addVal,subsVal)
+        val = val*20/100
+        val = round(val,2)
+        noise[addIndex] = val
+        noise[subsIndex]= -1*val
+        count +=2
+        if(count>=maxIterations):
+            return noise
+    addList = []
+    subsList = []
+    while(neg_heap):
+        (val,i) = heappop(neg_heap)
+        if(val>=.05 and response[i]>0):
+            subsList.append((val,i));
+        if(val>=.05 and response[i]==0):
+            addList.append((val,i))
+    minLength = min(len(addList),len(subsList))
+    for index in range(minLength):
+        (addVal,addIndex) = addList[index]
+        (subsVal,subsIndex) = subsList[index]
+        val = min(addVal,subsVal)
+        val = val*20/100
+        val = round(val,2)
+        noise[addIndex] = val
+        noise[subsIndex]= -1*val
+        count +=2
+        if(count>=maxIterations):
+            return noise
+    return noise
