@@ -31,16 +31,19 @@ class Hunter:
     def preyInFront(self):
         h2p =  self.preyCoord.x - self.hunterCoord.x, self.preyCoord.y - self.hunterCoord.y
 
-        return h2p[0] * self.hunterCoord.vx > 0 and h2p[1] * self.hunterCoord.vy > 0
+        return h2p[0] * self.hunterCoord.vx > 0 or h2p[1] * self.hunterCoord.vy > 0
+
 
     def moveFront(self, info):
+        flag  = 0
         if self.wallInBetween():
             resp = self.removeAndBuildWall()
+            flag = 1
         else:
             resp = self.goodTimeForWall()
             resp = {'wallAdd': resp}
 
-        if len(self.walls) >= self.maxWalls:
+        if len(self.walls) >= self.maxWalls and not flag:
             resp['wallDelete'] = self.removeWalls()
 
         return resp
@@ -186,7 +189,12 @@ class Hunter:
         if verArea == self.INF and horArea == self.INF:
             ret['wallAdd'] = 0
         else:
-            ret['wallAdd'] = 2 if verArea < horArea else 1
+            if verArea < horArea:
+                ret['wallAdd'] = 2
+                self.walls.append(ver)
+            else:
+                ret['wallAdd'] = 1
+                self.walls.append(hor)
 
         return ret
 
@@ -219,8 +227,10 @@ class Hunter:
         if minArea > currArea:
             return 0
         elif minArea == horArea:
+            self.walls.append(hor)
             return 1
         else:
+            self.walls.append(ver)
             return 2
 
 
