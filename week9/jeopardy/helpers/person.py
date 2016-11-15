@@ -25,5 +25,4 @@ class Person:
         # send back initial weight for now
         response = utils.parseResponse(guess)
         noise = utils.getNoise(self.initialWeights,response)
-        self.initialWeights = self.initialWeights + noise
-        return self.initialWeights
+        return self.initialWeights + noise
