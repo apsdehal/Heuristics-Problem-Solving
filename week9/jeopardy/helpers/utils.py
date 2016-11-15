@@ -52,9 +52,59 @@ def get_valid_prob(n):
 
 
 def get_valid_weights(n):
-    half = n/2
+    total_nums = n
+    pos_nums = 38*total_nums/100
+    neg_nums = total_nums - pos_nums
+    mlist_pos = np.random.random(pos_nums)
+    sum =0
+    for i in mlist_pos:
+        sum += i
+    newSum = 0
+    maxVal = 0
+    minVal = 1
+    maxValIndex = 0
+    minValIndex = 0
+    for index, item in enumerate(mlist_pos):
+        mlist_pos[index]=round(item/sum,2)
+        newSum += mlist_pos[index]
+        if(mlist_pos[index]>maxVal):
+            maxVal = mlist_pos[index]
+            maxValIndex = index
+        if(mlist_pos[index]<minVal):
+            minVal = mlist_pos[index]
+            minValIndex = index
+    diff = 1 - newSum
+    if(diff>0):
+        mlist_pos[minValIndex] = mlist_pos[minValIndex] + diff
+    if(diff<0):
+        mlist_pos[maxValIndex] = mlist_pos[maxValIndex] + diff
 
-    a = np.zeros(n)
-    a[:half] = get_valid_prob(half)
-    a[half:] = -get_valid_prob(n - half)
-    return np.around(a, 2)
+    #for negetive numbers
+    mlist_neg = np.random.random(neg_nums)
+    sum =0
+    for i in mlist_neg:
+        sum += i
+    newSum = 0
+    maxVal = 0
+    minVal = 1
+    maxValIndex = 0
+    minValIndex = 0
+    for index, item in enumerate(mlist_neg):
+        temp=round(item/sum,2)
+        mlist_neg[index]=-temp
+        newSum += temp
+        if(temp>maxVal):
+            maxVal = temp
+            maxValIndex = index
+        if(temp<minVal):
+            minVal = temp
+            minValIndex = index
+    diff = 1 - newSum
+    if(diff>0):
+        mlist_neg[minValIndex] = mlist_neg[minValIndex] - diff
+    if(diff<0):
+        mlist_neg[maxValIndex] = mlist_neg[maxValIndex] - diff
+
+    mWeights = np.concatenate((mlist_pos, mlist_neg))
+    np.random.shuffle(mWeights)
+    return mWeights
