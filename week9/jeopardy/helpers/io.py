@@ -1,6 +1,7 @@
 from person import Person
 from matchmaker import Matchmaker
 import socket
+import utils
 
 class IO:
     def __init__(self, host, port):
@@ -36,7 +37,28 @@ class IO:
 
         for i in range(20):
             # 7 char weights + commas + exclamation
-            data = sock.recv(8*num_attr)
+            data = self.sock.recv(8*num_attr)
             print('%d: Received guess = %r' % (i, data))
             assert data[-1] == '\n'
-            sock.send(floats_to_msg2(self.player.getNewWeights(data)))
+            self.sock.send(utils.floats_to_msg2(self.player.getNewWeights(data)))
+
+    def startMatchmakerIO(self):
+
+        for i in range(20):
+            # score digits + binary labels + commas + exclamation
+            data = self.sock.recv(8 + 2*num_attr)
+            print('Score = %s' % data[:8])
+            assert data[-1] == '\n'
+
+        self.player.parseInitialData(data)
+
+        # Set initial score higher than 1 so we know it is initial round
+        score = 2
+        for i in range(20):
+            msg = self.player.guess(score)
+            self.sock.sendall(utils.floats_to_msg4(msg))
+
+            data = self.sock.recv(8)
+            assert data[-1] == '\n'
+            score = float(data[:-1])
+            print('i = %d score = %f' % (i, score))
