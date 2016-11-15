@@ -1,3 +1,4 @@
+import utils
 class Person:
     def __init__(self, numAttr):
         self.numAttr = numAttr
@@ -5,7 +6,9 @@ class Person:
 
     def getValidWeights(self):
         # Set initial weight here
-
+        self.initialWeights = utils.get_valid_weights(self.numAttr)
+        return self.initialWeights
+        
     def getIdealCandidate(self):
         # Initial setup for ideal candidate, change accordingly
         return self.initialWeights > 0

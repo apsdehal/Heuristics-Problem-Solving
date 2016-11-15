@@ -6,5 +6,3 @@ if __name__ == '__main__':
 
     playerName = "person" if int(sys.argv[1]) == 0 else "matchmaker"
     io.start(playerName)
-
-    io.begin()

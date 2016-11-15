@@ -1,3 +1,5 @@
+import numpy as np
+
 def binary_candidate_score_to_msg(score, candidate):
     msg = '%+1.4f:' % score
 
@@ -37,3 +39,22 @@ def candidate_to_msg(arr):
         strings.append('%d' % a)
     msg = ','.join(strings) + '\n'
     return msg
+
+
+def get_valid_prob(n):
+    alpha = np.random.random(n)
+    p = np.random.dirichlet(alpha)
+    p = np.trunc(p*100)/100.0
+
+    # ensure p sums to 1 after rounding
+    p[-1] = 1 - np.sum(p[:-1])
+    return p
+
+
+def get_valid_weights(n):
+    half = n/2
+
+    a = np.zeros(n)
+    a[:half] = get_valid_prob(half)
+    a[half:] = -get_valid_prob(n - half)
+    return np.around(a, 2)

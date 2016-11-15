@@ -6,7 +6,7 @@ import utils
 class IO:
     def __init__(self, host, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect(('localhost', PORT))
+        self.sock.connect(('localhost', port))
 
     def start(self, playerName):
         numString = self.sock.recv(4)
@@ -37,7 +37,7 @@ class IO:
 
         for i in range(20):
             # 7 char weights + commas + exclamation
-            data = self.sock.recv(8*num_attr)
+            data = self.sock.recv(8*self.numAttr)
             print('%d: Received guess = %r' % (i, data))
             assert data[-1] == '\n'
             self.sock.send(utils.floats_to_msg2(self.player.getNewWeights(data)))
@@ -46,7 +46,7 @@ class IO:
 
         for i in range(20):
             # score digits + binary labels + commas + exclamation
-            data = self.sock.recv(8 + 2*num_attr)
+            data = self.sock.recv(8 + 2*self.numAttr)
             print('Score = %s' % data[:8])
             assert data[-1] == '\n'
 
