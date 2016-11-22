@@ -5,16 +5,29 @@ from collections import deque
 class Choreo:
     def __init__(self, io):
         self.board = io.board
-        self.pairs = getPairs(io.red,io.blue)
+        self.pairs = getPairs(io)
         self.boardSize = io.boardSize
 
     def move(self):
         toBeRemoved = []
         output = ""
+
+        takenRed = []
+        takenBlue = []
         for i in range(len(self.pairs)):
             curr = self.pairs[i]
             red = curr[0]
             blue = curr[1]
+
+            if red not in takenRed:
+                takenRed.append(red)
+            else:
+                print 'Found taken', red
+
+            if blue not in takenBlue:
+                takenBlue.append(blue)
+            else:
+                print 'Found taken', blue
 
             if self.getDist(red, blue) == 1:
                 toBeRemoved.append(i)
@@ -77,7 +90,7 @@ class Choreo:
 
         redCoordString = self.getCoordinateString(red)
         blueCoordString = self.getCoordinateString(blue)
-        
+
         parent[redCoordString] = None
 
         while len(q):

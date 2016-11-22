@@ -52,11 +52,20 @@ class IO:
 
     def setupBoard(self, size, red, blue):
         board = [['.' for i in range(size)] for j in range(size)]
-        for r in red:
+        tupleBoard = [[0 for i in range(size)] for j in range(size)]
+
+        for i in range(0, len(red)):
+            r = red[i]
             board[r[0]][r[1]] = 'R'
-        for b in blue:
+            tupleBoard[r[0]][r[1]] = (i, 'R')
+
+        for i in range(0, len(blue)):
+            b = blue[i]
             board[b[0]][b[1]] = 'B'
+            tupleBoard[b[0]][b[1]] = (i, 'B')
+
         self.board = board
+        self.tupleBoard = tupleBoard
 
     def begin(self):
         data = ""
@@ -81,6 +90,7 @@ class IO:
         self.s.close()
 
     def sendOutput(self, moves):
+        print moves
         self.s.sendall('{}'.format(moves))
 
     def getStarConfiguration(self, data):
