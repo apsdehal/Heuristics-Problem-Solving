@@ -8,10 +8,13 @@ class Voronoi:
 	HOST = 'localhost'
 	PORT = 9000
 	STRIDE = 60
+	NUMBER_OF_PLAYERS = 2
 
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-	def __init__(self, stones):
+	def __init__(self, stones, nPlayers, port):
+		self.PORT = port
+		self.NUMBER_OF_PLAYERS = nPlayers
 		self.s.connect((self.HOST, self.PORT))
 		self.maxStones = stones
 		self.greedy = Greedy(self.STRIDE, self.maxStones)
@@ -47,5 +50,7 @@ class Voronoi:
 
 if __name__ == "__main__":
 	maxStones = int(sys.argv[1])
-	voronoi = Voronoi(maxStones)
+	numberOfPlayers = int(sys.argv[2])
+	port = int(sys.argv[3])
+	voronoi = Voronoi(maxStones,numberOfPlayers,port)
 	voronoi.start()
