@@ -32,11 +32,20 @@ class Voronoi:
 				break
 
 			self.noOfMoves = int(data[1]) - 1
-			if(self.noOfMoves >= 0):
-				self.lastMoveOfOpponent_x = int(data[2 + self.noOfMoves * 3])
-				self.lastMoveOfOpponent_y = int(data[2 + self.noOfMoves * 3 + 1])
-				self.stones[1].append(Stone(self.lastMoveOfOpponent_x, self.lastMoveOfOpponent_y))
-				self.greedy.updatePull(self.stones, 1)
+			self.playersMovedTillNow = int(data[1])
+			if(self.playersMovedTillNow < self.NUMBER_OF_PLAYERS):
+				for i in range(0,self.playersMovedTillNow):
+					self.lastMoveOfOpponent_x = int(data[2 + i * 3])
+					self.lastMoveOfOpponent_y = int(data[2 + i * 3 + 1])
+					self.stones[1].append(Stone(self.lastMoveOfOpponent_x, self.lastMoveOfOpponent_y))
+					self.greedy.updatePull(self.stones, 1)
+			else:
+				startIndex = self.playersMovedTillNow - self.NUMBER_OF_PLAYERS + 1
+				for i in range(startIndex,self.playersMovedTillNow):
+					self.lastMoveOfOpponent_x = int(data[2 + i * 3])
+					self.lastMoveOfOpponent_y = int(data[2 + i * 3 + 1])
+					self.stones[1].append(Stone(self.lastMoveOfOpponent_x, self.lastMoveOfOpponent_y))
+					self.greedy.updatePull(self.stones, 1)
 
 			nextMove = self.greedy.move(self.stones)
 
